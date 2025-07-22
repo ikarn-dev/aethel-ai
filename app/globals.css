@@ -1,4 +1,18 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+
+@font-face {
+  font-family: 'BananaGrotesk';
+  src: url('/assets/loader-text/BananaGrotesk-Extrabold.woff2') format('woff2'),
+       url('/assets/loader-text/BananaGrotesk-Extrabold.woff') format('woff'),
+       url('/assets/loader-text/BananaGrotesk-Extrabold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --background: #ffffff;
@@ -19,8 +33,61 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Account for fixed navbar */
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  /* Optimize scrolling performance */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Smooth scrolling optimization for 60fps */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Hardware acceleration for smooth animations */
+.smooth-scroll {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.playfair-display {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.bebas-neue {
+  font-family: 'Bebas Neue', cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.barlow-bold {
+  font-family: 'Barlow', Arial, sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.josefin-sans {
+  font-family: "Josefin Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.banana-grotesk {
+  font-family: 'BananaGrotesk', Arial, sans-serif;
+  font-weight: 800;
+  font-style: normal;
 }
