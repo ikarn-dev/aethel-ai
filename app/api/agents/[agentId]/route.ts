@@ -7,11 +7,12 @@ export async function OPTIONS() {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { agentId: string } }
+  { params }: { params: Promise<{ agentId: string }> }
 ) {
+  const resolvedParams = await params;
   try {
     // Sanitize agent ID
-    const sanitizedAgentId = sanitizeAgentId(params.agentId);
+    const sanitizedAgentId = sanitizeAgentId(resolvedParams.agentId);
     const validationError = validateAgentId(sanitizedAgentId);
     if (validationError) {
       return createResponse({ error: validationError }, 400);
@@ -20,7 +21,7 @@ export async function GET(
     const data = await makeBackendRequest(`/api/v1/agents/${sanitizedAgentId}`, {}, true);
     return createResponse(data);
   } catch (error: any) {
-    logError('Failed to fetch agent', error, params.agentId);
+    logError('Failed to fetch agent', error, resolvedParams.agentId);
     const status = error.status || 500;
     const errorMessage = error.data?.message || error.message || 'Failed to fetch agent';
     return createResponse({ error: errorMessage }, status);
@@ -29,8 +30,9 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { agentId: string } }
+  { params }: { params: Promise<{ agentId: string }> }
 ) {
+  const resolvedParams = await params;
   try {
     // Rate limiting
     const clientIp = request.headers.get('x-forwarded-for') || 
@@ -42,7 +44,7 @@ export async function PUT(
     }
 
     // Sanitize agent ID
-    const sanitizedAgentId = sanitizeAgentId(params.agentId);
+    const sanitizedAgentId = sanitizeAgentId(resolvedParams.agentId);
     const validationError = validateAgentId(sanitizedAgentId);
     if (validationError) {
       return createResponse({ error: validationError }, 400);
@@ -68,7 +70,7 @@ export async function PUT(
     
     return createResponse(data);
   } catch (error: any) {
-    logError('Failed to update agent', error, params.agentId);
+    logError('Failed to update agent', error, resolvedParams.agentId);
     const status = error.status || 500;
     const errorMessage = error.data?.message || error.message || 'Failed to update agent';
     return createResponse({ error: errorMessage }, status);
@@ -77,8 +79,9 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { agentId: string } }
+  { params }: { params: Promise<{ agentId: string }> }
 ) {
+  const resolvedParams = await params;
   try {
     // Rate limiting
     const clientIp = request.headers.get('x-forwarded-for') || 
@@ -90,7 +93,7 @@ export async function DELETE(
     }
 
     // Sanitize agent ID
-    const sanitizedAgentId = sanitizeAgentId(params.agentId);
+    const sanitizedAgentId = sanitizeAgentId(resolvedParams.agentId);
     const validationError = validateAgentId(sanitizedAgentId);
     if (validationError) {
       return createResponse({ error: validationError }, 400);
@@ -102,7 +105,7 @@ export async function DELETE(
     
     return createResponse({ message: 'Agent deleted successfully' });
   } catch (error: any) {
-    logError('Failed to delete agent', error, params.agentId);
+    logError('Failed to delete agent', error, resolvedParams.agentId);
     const status = error.status || 500;
     const errorMessage = error.data?.message || error.message || 'Failed to delete agent';
     return createResponse({ error: errorMessage }, status);

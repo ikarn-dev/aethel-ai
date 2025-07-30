@@ -7,8 +7,9 @@ export async function OPTIONS() {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { agentId: string } }
+  { params }: { params: Promise<{ agentId: string }> }
 ) {
+  const resolvedParams = await params;
   try {
     // Rate limiting
     const clientIp = request.headers.get('x-forwarded-for') || 
@@ -20,7 +21,7 @@ export async function POST(
     }
 
     // Sanitize agent ID
-    const sanitizedAgentId = sanitizeAgentId(params.agentId);
+    const sanitizedAgentId = sanitizeAgentId(resolvedParams.agentId);
     const validationError = validateAgentId(sanitizedAgentId);
     if (validationError) {
       return createResponse({ error: validationError }, 400);
@@ -44,7 +45,7 @@ export async function POST(
     
     return createResponse(data);
   } catch (error: any) {
-    logError('Failed to send webhook', error, params.agentId);
+    logError('Failed to send webhook', error, resolvedParams.agentId);
     const status = error.status || 500;
     const errorMessage = error.data?.message || error.message || 'Failed to send webhook';
     return createResponse({ error: errorMessage }, status);
