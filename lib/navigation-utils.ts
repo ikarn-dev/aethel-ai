@@ -12,7 +12,7 @@ export const ROUTES = {
   CHAT: '/app',
   AGENTS: '/app/agents',
   SETTINGS: '/app/settings',
-} as const;
+};
 
 /**
  * Navigation item configuration with proper route mapping
