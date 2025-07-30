@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Aethel AI - Next Generation AI Platform",
-  description: "Experience the future of artificial intelligence with Aethel AI. Discover, create, and innovate with cutting-edge AI technology.",
+  title: "Aethel AI - Agent Management Platform",
+  description: "Create, manage, and interact with multiple AI agents. Experience comprehensive agent lifecycle management with Aethel AI's intuitive interface.",
 };
 
 export default function RootLayout({
