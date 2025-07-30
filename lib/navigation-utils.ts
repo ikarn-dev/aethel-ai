@@ -23,12 +23,14 @@ export const NAVIGATION_ITEMS = [
     label: 'Chat',
     href: ROUTES.CHAT,
     icon: 'MessageCircle',
+    isDisabled: false,
   },
   {
     id: 'agents' as NavigationItemId,
     label: 'Agents',
     href: ROUTES.AGENTS,
     icon: 'Users',
+    isDisabled: false,
   },
   {
     id: 'settings' as NavigationItemId,
