@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import LoadingIcon from "./loading-icon";
+import { Badge } from "./ui/badge";
 
 interface LoadingProps {
   onComplete?: () => void;
@@ -11,8 +12,30 @@ interface LoadingProps {
 export default function Loading({ onComplete, isTransitioning = false }: LoadingProps) {
   const [showContent, setShowContent] = useState(true);
   const [loadingPercentage, setLoadingPercentage] = useState(0);
+  const [visibleLetters, setVisibleLetters] = useState(0);
+  const [showLogo, setShowLogo] = useState(false);
+  const [showBadge, setShowBadge] = useState(false);
+
+  const text = "Aethel|AI";
+  const totalLetters = text.length;
 
   useEffect(() => {
+    // Letter-by-letter animation
+    const letterInterval = setInterval(() => {
+      setVisibleLetters(prev => {
+        if (prev < totalLetters) {
+          return prev + 1;
+        } else {
+          clearInterval(letterInterval);
+          // Show logo after all letters are visible
+          setTimeout(() => setShowLogo(true), 200);
+          // Show badge with stamp effect after logo
+          setTimeout(() => setShowBadge(true), 600);
+          return prev;
+        }
+      });
+    }, 150); // Show each letter every 150ms
+
     // Animate loading percentage from 0 to 100 over 2.2 seconds
     const duration = 2200; // 2.2 seconds
     const interval = 20; // Update every 20ms for smooth animation
@@ -29,18 +52,24 @@ export default function Loading({ onComplete, isTransitioning = false }: Loading
       });
     }, interval);
 
-    // Show loading for 2.5 seconds, then trigger completion
+    // Calculate total animation time and add buffer
+    // Letters: 9 letters * 150ms = 1350ms
+    // Logo delay: +200ms = 1550ms
+    // Badge delay: +600ms = 1950ms
+    // Badge animation: +400ms = 2350ms
+    // Buffer time: +1500ms = 3850ms total
     const timer = setTimeout(() => {
       if (onComplete) {
         onComplete();
       }
-    }, 2500);
+    }, 3850);
 
     return () => {
       clearTimeout(timer);
       clearInterval(percentageTimer);
+      clearInterval(letterInterval);
     };
-  }, [onComplete]);
+  }, [onComplete, totalLetters]);
 
   // Fade out content when sliding starts
   useEffect(() => {
@@ -66,35 +95,66 @@ export default function Loading({ onComplete, isTransitioning = false }: Loading
           </div>
 
           <div className="flex flex-col items-center justify-center h-full">
-            {/* Main Brand Section - Tight spacing */}
-            <div className="flex flex-col items-center">
-              {/* Logo and Text Row - No bottom margin */}
+            {/* Main Brand Section - Reduced spacing */}
+            <div className="flex flex-col items-center -mt-8">
+              {/* Logo and Text Row - Letter by letter animation */}
               <div className="flex items-center">
-                {/* Brand Text: Aethel | AI */}
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-wide">
-                    Aethel
-                  </span>
-                  <span className="text-3xl sm:text-4xl md:text-5xl font-light text-teal-400">
-                    |
-                  </span>
-                  <span className="text-3xl sm:text-4xl md:text-5xl font-bold text-teal-400">
-                    AI
-                  </span>
+                {/* Brand Text: Letter-by-letter fade reveal */}
+                <div className="flex items-center">
+                  {text.split('').map((letter, index) => {
+                    const isVisible = index < visibleLetters;
+                    const isSeparator = letter === '|';
+                    const isAI = index > 6; // "AI" comes after separator
+
+                    return (
+                      <span
+                        key={index}
+                        className={`text-2xl sm:text-3xl md:text-4xl font-black tracking-tight font-mono rounded-lg text-shadow-sm transition-opacity duration-500 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'
+                          } ${isSeparator
+                            ? 'text-teal-400 font-light mx-1'
+                            : isAI
+                              ? 'text-teal-400'
+                              : 'text-white'
+                          }`}
+                        style={{
+                          fontFamily: isSeparator ? 'monospace' : 'Comic Sans MS, cursive, system-ui',
+                          transitionDelay: `${index * 100}ms`
+                        }}
+                      >
+                        {letter}
+                      </span>
+                    );
+                  })}
                 </div>
 
-                {/* Rotating Flames Logo - Right side, very close to text */}
+                {/* Rotating Flames Logo - Slides in after text */}
                 <LoadingIcon
-                  size={320}
-                  className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 -ml-2"
-                  animate={true}
+                  size={280}
+                  className={`w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 -ml-1 transition-all duration-500 ease-out ${showLogo
+                    ? 'opacity-100 transform translate-x-0 scale-100'
+                    : 'opacity-0 transform translate-x-8 scale-75'
+                    }`}
+                  animate={showLogo}
                 />
               </div>
 
-              {/* Powered by JuliaOS - Very close to main text */}
-              <p className="text-sm text-gray-400 font-medium tracking-wide -mt-1">
+              {/* Powered by JuliaOS - Badge with stamp effect */}
+              <Badge
+                variant="outline"
+                className={`text-xs text-gray-400 border-gray-600 bg-slate-800/50 backdrop-blur-sm font-bold tracking-wide -mt-2 transition-all duration-300 ease-out ${showBadge
+                  ? 'opacity-100 transform scale-100 rotate-0'
+                  : 'opacity-0 transform scale-0 rotate-12'
+                  } ${isTransitioning ? 'transform rotate-3 scale-105 opacity-80' : ''
+                  }`}
+                style={{
+                  transformOrigin: 'center',
+                  background: 'linear-gradient(90deg, rgba(51, 65, 85, 0.5) 0%, rgba(71, 85, 105, 0.6) 50%, rgba(51, 65, 85, 0.5) 100%)',
+                  backgroundSize: '200% 100%',
+                  animation: showBadge ? 'stampIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards' : 'none'
+                }}
+              >
                 Powered by JuliaOS
-              </p>
+              </Badge>
             </div>
           </div>
         </>

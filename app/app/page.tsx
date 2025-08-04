@@ -5,8 +5,8 @@ import Link from "next/link";
 import { AgentService } from "@/lib/agent-service";
 import { Message } from "@/lib/types";
 
-import PageRetryHandler from "@/components/page-retry-handler";
-import LoadingIcon from "@/components/loading-icon";
+import PageRetryHandler from "@/components/error-handling/page-retry-handler";
+import LoadingIcon from "@/components/ui/common/loading-icon";
 
 // Rotating text component for AI thinking messages
 function RotatingText() {
@@ -112,6 +112,22 @@ export default function MainChatPage() {
     };
   }, [agentStatus.id]);
 
+  // Add frequent status polling for better responsiveness
+  useEffect(() => {
+    if (!agentStatus.id) return;
+
+    // Poll every 2 seconds when agent is not running to catch state changes quickly
+    const shouldPoll = agentStatus.state !== "RUNNING" && !isInitializing;
+
+    if (shouldPoll) {
+      const pollInterval = setInterval(() => {
+        refreshAgentStatus();
+      }, 2000);
+
+      return () => clearInterval(pollInterval);
+    }
+  }, [agentStatus.id, agentStatus.state, isInitializing]);
+
   const refreshAgentStatus = async () => {
     if (!agentStatus.id) return;
 
@@ -213,10 +229,37 @@ export default function MainChatPage() {
         }
       }
 
-      // If no specific agent was selected or it doesn't exist, use the first available agent
+      // If no specific agent was selected or it doesn't exist, find a regular chat agent
       if (!targetAgent) {
-        const availableAgents = agentsResult.data;
-        targetAgent = availableAgents[0];
+        // Filter out Smart Money Analysis agents for regular chat
+        const regularChatAgents = agentsResult.data.filter(agent => {
+          const description = agent.description.toLowerCase();
+          const name = agent.name.toLowerCase();
+          
+          // Exclude agents that are specifically for analysis
+          return !(description.includes('smart money') ||
+                   description.includes('wallet analysis') ||
+                   description.includes('trading insights') ||
+                   description.includes('external data') ||
+                   name.includes('smart money') ||
+                   name.includes('analysis') ||
+                   name.includes('wallet'));
+        });
+
+        if (regularChatAgents.length > 0) {
+          targetAgent = regularChatAgents[0];
+        } else {
+          // If no regular chat agents exist, show a helpful message
+          setAgentStatus(prev => ({ ...prev, state: "ERROR" }));
+          setMessages([{
+            id: "no-chat-agents",
+            content: "No regular chat agents found. All available agents are configured for Smart Money Analysis. Please create a regular LLM Chat agent from the Agents page for general conversations.",
+            sender: "ai",
+            timestamp: new Date(),
+          }]);
+          setIsInitializing(false);
+          return;
+        }
       }
 
       // Get fresh agent status from server to ensure we have the latest state
@@ -417,34 +460,42 @@ export default function MainChatPage() {
     <PageRetryHandler onRetry={selectAgent}>
       <div className="flex flex-col h-full bg-slate-900">
         {/* Header */}
-        <div className="bg-slate-800/50 backdrop-blur-sm border-b border-slate-700/50 p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-lg flex items-center justify-center">
-                <span className="text-slate-900 font-bold text-sm">K</span>
+        <div className="relative bg-gradient-to-r from-slate-800/60 via-slate-800/50 to-slate-800/60 backdrop-blur-md border-b border-teal-400/10 p-6">
+          {/* Subtle background pattern */}
+          <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 via-transparent to-cyan-500/5"></div>
+
+          <div className="relative flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-slate-900 font-black text-lg" style={{ fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>K</span>
               </div>
-              <div>
-                <h1 className="text-lg font-semibold text-white">AI Assistant</h1>
-                <p className="text-sm text-gray-400">
-                  Chat with {agentStatus.name || 'your agents'}.
-                  <Link
-                    href="/app/agents"
-                    prefetch={true}
-                    className="text-teal-400 hover:text-teal-300 ml-1 underline"
-                  >
-                    Manage agents
-                  </Link>
-                </p>
+              <div className="space-y-1">
+                <h1 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-100 to-teal-200 tracking-tight"
+                  style={{ fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
+                  AI Assistant
+                </h1>
+                <div className="flex items-center space-x-2">
+                  <div className="w-1.5 h-1.5 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
+                  <p className="text-xs font-medium text-gray-300 tracking-wide"
+                    style={{ fontFamily: 'SF Pro Display, system-ui, sans-serif' }}>
+                    Chat with <span className="text-teal-400 font-semibold">{agentStatus.name || 'your agents'}</span>
+                  </p>
+                </div>
               </div>
             </div>
+
             <div className="flex items-center space-x-3">
-              <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium border ${agentStatus.state === "RUNNING" ? "bg-green-900/30 text-green-400 border-green-500/30" :
-                agentStatus.state === "ERROR" ? "bg-red-900/30 text-red-400 border-red-500/30" :
-                  isInitializing ? "bg-yellow-900/30 text-yellow-400 border-yellow-500/30" : "bg-gray-800/50 text-gray-400 border-gray-600/30"
-                }`}>
-                <div className={`w-2 h-2 rounded-full ${agentStatus.state === "RUNNING" ? "bg-green-400" :
+              <div className={`flex items-center space-x-2 px-2 py-1 rounded-lg text-xs font-medium border backdrop-blur-sm ${agentStatus.state === "RUNNING"
+                ? "bg-green-900/20 text-green-400 border-green-500/30" :
+                agentStatus.state === "ERROR"
+                  ? "bg-red-900/20 text-red-400 border-red-500/30" :
+                  isInitializing
+                    ? "bg-yellow-900/20 text-yellow-400 border-yellow-500/30"
+                    : "bg-slate-800/50 text-gray-400 border-slate-600/30"
+                }`} style={{ fontFamily: 'SF Pro Display, system-ui, sans-serif' }}>
+                <div className={`w-1.5 h-1.5 rounded-full ${agentStatus.state === "RUNNING" ? "bg-green-400 animate-pulse" :
                   agentStatus.state === "ERROR" ? "bg-red-400" :
-                    isInitializing ? "bg-yellow-400" : "bg-gray-400"
+                    isInitializing ? "bg-yellow-400 animate-pulse" : "bg-gray-400"
                   }`}></div>
                 <span>
                   {agentStatus.state === "RUNNING" ? "Ready" :
@@ -452,14 +503,26 @@ export default function MainChatPage() {
                       isInitializing ? "Starting..." : "Offline"}
                 </span>
               </div>
+
               {agentStatus.state === "ERROR" && (
                 <button
                   onClick={startAgent}
-                  className="px-3 py-1 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white text-xs rounded-lg transition-colors"
+                  className="px-2 py-1 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white text-xs rounded-lg transition-all font-medium cursor-pointer shadow-sm hover:shadow-md"
+                  style={{ fontFamily: 'SF Pro Display, system-ui, sans-serif' }}
                 >
                   Retry
                 </button>
               )}
+
+              {/* Manage Agents Button */}
+              <Link
+                href="/app/agents"
+                prefetch={true}
+                className="px-2 py-1 bg-slate-800/50 hover:bg-slate-700/50 text-gray-300 hover:text-white border border-slate-600/30 hover:border-teal-400/30 text-xs rounded-lg transition-all font-medium cursor-pointer"
+                style={{ fontFamily: 'SF Pro Display, system-ui, sans-serif' }}
+              >
+                Manage
+              </Link>
             </div>
           </div>
         </div>

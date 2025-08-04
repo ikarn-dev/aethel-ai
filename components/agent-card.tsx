@@ -60,7 +60,7 @@ export function AgentCard({
     if (isLoading) {
       return {
         variant: 'secondary' as const,
-        className: 'bg-slate-100 text-slate-700 border-slate-200',
+        className: 'bg-slate-700/50 text-slate-300 border-slate-600',
         text: 'Loading...'
       };
     }
@@ -69,25 +69,25 @@ export function AgentCard({
       case 'RUNNING':
         return {
           variant: 'default' as const,
-          className: 'bg-teal-100 text-teal-800 border-teal-200 hover:bg-teal-200',
+          className: 'bg-green-900/30 text-green-400 border-green-500/30 hover:bg-green-900/40',
           text: 'Running'
         };
       case 'STOPPED':
         return {
           variant: 'destructive' as const,
-          className: 'bg-red-100 text-red-800 border-red-200',
+          className: 'bg-red-900/30 text-red-400 border-red-500/30',
           text: 'Stopped'
         };
       case 'CREATED':
         return {
           variant: 'secondary' as const,
-          className: 'bg-blue-100 text-blue-800 border-blue-200',
+          className: 'bg-blue-900/30 text-blue-400 border-blue-500/30',
           text: 'Created'
         };
       default:
         return {
           variant: 'secondary' as const,
-          className: 'bg-gray-100 text-gray-800 border-gray-200',
+          className: 'bg-slate-700/50 text-slate-300 border-slate-600',
           text: 'Unknown'
         };
     }
@@ -96,94 +96,109 @@ export function AgentCard({
   const statusProps = getStatusBadgeProps();
 
   return (
-    <Card className="w-full h-full min-h-[160px] max-h-[180px] bg-gradient-to-br from-teal-50 to-teal-100/50 border-teal-200 hover:shadow-lg hover:shadow-teal-200/50 transition-all duration-300 hover:scale-[1.02] group overflow-hidden relative">
-      {/* X Delete Button - Top Right */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={handleDelete}
-        disabled={actionLoading === 'delete'}
-        className="absolute top-1 right-1 h-6 w-6 text-teal-600 hover:text-red-600 hover:bg-red-50 transition-colors duration-200 z-10"
-        aria-label={`Delete ${agent.name}`}
-      >
-        <X className="h-4 w-4" />
-      </Button>
+    <div className="relative group">
+      {/* Subtle glowing border effect */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500/20 via-cyan-500/20 to-teal-500/20 rounded-2xl blur opacity-30 group-hover:opacity-60 transition-all duration-500"></div>
 
-      <CardContent className="p-3 h-full flex flex-col">
-        {/* Agent Name - Top Row */}
-        <div className="flex items-start justify-between mb-2">
-          <h3
-            className="text-sm font-bold text-teal-900 cursor-pointer hover:text-teal-700 transition-colors duration-200 leading-tight break-words pr-8 flex-1"
-            onClick={() => onSelect?.(agent)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onSelect?.(agent);
-              }
-            }}
-          >
-            {agent.name}
-          </h3>
-        </div>
+      <Card className="relative w-full h-full min-h-[160px] max-h-[180px] bg-gradient-to-br from-slate-800/80 via-slate-800/60 to-slate-900/80 backdrop-blur-md border border-slate-700/30 hover:border-teal-500/30 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-500 hover:scale-[1.02] group overflow-hidden rounded-2xl">
+        {/* Inner glow effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 via-transparent to-cyan-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-        {/* Description */}
-        <p className="text-teal-800 text-xs leading-relaxed line-clamp-2 mb-3 break-words">
-          {agent.description}
-        </p>
+        {/* X Delete Button - Top Right */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleDelete}
+          disabled={actionLoading === 'delete'}
+          className="absolute top-2 right-2 h-7 w-7 text-gray-400 hover:text-red-400 hover:bg-red-900/30 transition-colors duration-200 z-10 rounded-xl backdrop-blur-sm cursor-pointer"
+          aria-label={`Delete ${agent.name}`}
+        >
+          <X className="h-4 w-4" />
+        </Button>
 
-        {/* Created Date - Single Row */}
-        <div className="text-xs mb-3">
-          <span className="text-teal-700 font-medium">Created: </span>
-          <span className="text-teal-800 font-semibold">
-            {formatDate(agent.created_at)}
-          </span>
-        </div>
-
-        {/* Bottom Section with Badge and Buttons */}
-        <div className="mt-auto flex items-center justify-between">
-          {/* Status Badge */}
-          <Badge
-            variant={statusProps.variant}
-            className={`${statusProps.className} text-xs px-2 py-1 font-medium`}
-          >
-            {statusProps.text}
-          </Badge>
-
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-2">
-            {/* Chat Button - Always visible */}
-            <Button
-              onClick={() => {
-                // Store the selected agent in localStorage for the chat page
-                localStorage.setItem('selectedChatAgent', JSON.stringify(agent));
-                // Navigate to chat page
-                window.location.href = '/app';
+        <CardContent className="relative p-4 h-full flex flex-col z-10">
+          {/* Agent Name - Top Row */}
+          <div className="flex items-start justify-between mb-3">
+            <h3
+              className="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-100 to-teal-200 cursor-pointer hover:from-teal-300 hover:via-cyan-300 hover:to-white transition-all duration-300 leading-tight break-words pr-8 flex-1 tracking-tight"
+              onClick={() => onSelect?.(agent)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onSelect?.(agent);
+                }
               }}
-              size="sm"
-              variant="outline"
-              className="bg-white/80 hover:bg-white border-teal-300 text-teal-700 hover:text-teal-800 font-semibold transition-all duration-300 hover:shadow-md hover:shadow-teal-300/50 text-xs px-2 py-1 h-7"
-              aria-label={`Chat with ${agent.name}`}
+              style={{ fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}
             >
-              Chat
-            </Button>
-
-            {/* Start Button - Only when agent can be started */}
-            {canStart && (
-              <Button
-                onClick={() => handleStateChange('RUNNING')}
-                disabled={actionLoading !== null}
-                size="sm"
-                className="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-semibold transition-all duration-300 hover:shadow-md hover:shadow-teal-300/50 disabled:opacity-50 text-xs px-2 py-1 h-7"
-                aria-label={`Start ${agent.name}`}
-              >
-                {actionLoading === 'RUNNING' ? 'Starting...' : 'Start'}
-              </Button>
-            )}
+              {agent.name}
+            </h3>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+
+          {/* Description */}
+          <p className="text-gray-300 text-xs leading-relaxed line-clamp-2 mb-4 break-words font-medium"
+            style={{ fontFamily: 'SF Pro Display, system-ui, sans-serif' }}>
+            {agent.description}
+          </p>
+
+          {/* Created Date - Single Row */}
+          <div className="text-xs mb-4 flex items-center space-x-1"
+            style={{ fontFamily: 'SF Mono, Monaco, monospace' }}>
+            <div className="w-1.5 h-1.5 bg-teal-400 rounded-full opacity-60"></div>
+            <span className="text-gray-400 font-medium">Created:</span>
+            <span className="text-teal-300 font-bold tracking-wide">
+              {formatDate(agent.created_at)}
+            </span>
+          </div>
+
+          {/* Bottom Section with Badge and Buttons */}
+          <div className="mt-auto flex items-center justify-between">
+            {/* Status Badge */}
+            <Badge
+              variant={statusProps.variant}
+              className={`${statusProps.className} text-xs px-3 py-1.5 font-bold rounded-xl shadow-sm`}
+              style={{ fontFamily: 'SF Pro Display, system-ui, sans-serif' }}
+            >
+              {statusProps.text}
+            </Badge>
+
+            {/* Action Buttons */}
+            <div className="flex items-center space-x-2">
+              {/* Chat Button - Always visible */}
+              <Button
+                onClick={() => {
+                  // Store the selected agent in localStorage for the chat page
+                  localStorage.setItem('selectedChatAgent', JSON.stringify(agent));
+                  // Navigate to chat page
+                  window.location.href = '/app';
+                }}
+                size="sm"
+                variant="outline"
+                className="bg-slate-700/50 hover:bg-slate-600/50 border-slate-600 hover:border-teal-500/50 text-gray-300 hover:text-white font-bold transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20 text-xs px-3 py-1.5 h-8 rounded-xl cursor-pointer"
+                aria-label={`Chat with ${agent.name}`}
+                style={{ fontFamily: 'SF Pro Display, system-ui, sans-serif' }}
+              >
+                Chat
+              </Button>
+
+              {/* Start Button - Only when agent can be started */}
+              {canStart && (
+                <Button
+                  onClick={() => handleStateChange('RUNNING')}
+                  disabled={actionLoading !== null}
+                  size="sm"
+                  className="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-bold transition-all duration-300 hover:shadow-lg hover:shadow-teal-400/30 disabled:opacity-50 text-xs px-3 py-1.5 h-8 rounded-xl cursor-pointer"
+                  aria-label={`Start ${agent.name}`}
+                  style={{ fontFamily: 'SF Pro Display, system-ui, sans-serif' }}
+                >
+                  {actionLoading === 'RUNNING' ? 'Starting...' : 'Start'}
+                </Button>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

@@ -38,6 +38,9 @@ export async function apiCall<T = any>(
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`API error (${response.status}):`, errorText);
+      console.error(`Request URL:`, url);
+      console.error(`Request method:`, options.method || 'GET');
+      console.error(`Request headers:`, options.headers);
       throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
 

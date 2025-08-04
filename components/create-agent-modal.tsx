@@ -56,7 +56,7 @@ export function CreateAgentModal({ isOpen, onClose, onSuccess, onShowToast }: Cr
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Agent store hooks
   const { createAgent, fetchAgents } = useAgentActions();
   const isLoading = useAgentLoading();
@@ -125,7 +125,7 @@ export function CreateAgentModal({ isOpen, onClose, onSuccess, onShowToast }: Cr
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -179,7 +179,7 @@ export function CreateAgentModal({ isOpen, onClose, onSuccess, onShowToast }: Cr
 
       // Create the agent using the store
       const createdAgent = await createAgent(agentConfig);
-      
+
       if (createdAgent) {
         // Show success toast
         if (onShowToast) {
@@ -212,7 +212,7 @@ export function CreateAgentModal({ isOpen, onClose, onSuccess, onShowToast }: Cr
         setErrors({
           general: 'Failed to create agent. Please check your configuration and try again.'
         });
-        
+
         if (onShowToast) {
           onShowToast(
             'error',
@@ -224,7 +224,7 @@ export function CreateAgentModal({ isOpen, onClose, onSuccess, onShowToast }: Cr
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create agent';
       setErrors({ general: errorMessage });
-      
+
       if (onShowToast) {
         onShowToast(
           'error',
@@ -240,17 +240,19 @@ export function CreateAgentModal({ isOpen, onClose, onSuccess, onShowToast }: Cr
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-teal-900/90 backdrop-blur-md border border-teal-400/30 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto scrollbar-hide">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-gradient-to-br from-slate-800/95 via-slate-900/95 to-teal-900/95 backdrop-blur-xl border border-teal-400/20 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto scrollbar-hide shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-teal-400/20">
-          <h2 className="text-xl font-semibold text-white">Create New Agent</h2>
+        <div className="flex items-center justify-between p-4 border-b border-teal-400/10">
+          <h2 className="text-lg font-semibold text-white">
+            Create New Agent
+          </h2>
           <button
             onClick={onClose}
             disabled={isSubmitting || isLoading}
-            className="text-teal-300 hover:text-white transition-colors disabled:opacity-50"
+            className="p-1 text-teal-300 hover:text-white hover:bg-teal-800/30 rounded transition-all duration-200 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -260,14 +262,14 @@ export function CreateAgentModal({ isOpen, onClose, onSuccess, onShowToast }: Cr
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* General Error */}
           {errors.general && (
-            <div className="bg-red-500/20 border border-red-400/30 rounded-lg p-3">
+            <div className="bg-red-500/20 border border-red-400/40 rounded-lg p-3">
               <p className="text-red-300 text-sm">{errors.general}</p>
             </div>
           )}
 
           {/* Agent Name */}
-          <div>
-            <label htmlFor="agent-name" className="block text-sm font-medium text-teal-200 mb-2">
+          <div className="space-y-2">
+            <label htmlFor="agent-name" className="block text-sm text-teal-200">
               Agent Name *
             </label>
             <input
@@ -275,109 +277,106 @@ export function CreateAgentModal({ isOpen, onClose, onSuccess, onShowToast }: Cr
               type="text"
               value={formData.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
-              className={`w-full px-3 py-2 bg-teal-800/30 border rounded-lg text-white placeholder-teal-300/50 focus:outline-none focus:ring-2 focus:ring-teal-400 ${
-                errors.name ? 'border-red-400' : 'border-teal-400/30'
-              }`}
+              className={`w-full px-3 py-2 bg-slate-800/50 border rounded-lg text-white placeholder-teal-300/50 focus:outline-none focus:ring-1 focus:ring-teal-400/50 focus:border-teal-400/50 transition-all text-sm ${errors.name ? 'border-red-400/60' : 'border-teal-400/20 hover:border-teal-400/40'
+                }`}
               placeholder="Enter agent name"
               maxLength={100}
               disabled={isSubmitting || isLoading}
             />
             {errors.name && (
-              <p className="text-red-300 text-sm mt-1">{errors.name}</p>
+              <p className="text-red-300 text-xs">{errors.name}</p>
             )}
-            <p className="text-teal-300/60 text-xs mt-1">{formData.name.length}/100 characters</p>
           </div>
 
 
 
           {/* Strategy Selection */}
-          <div>
-            <label htmlFor="agent-strategy" className="block text-sm font-medium text-teal-200 mb-2">
+          <div className="space-y-2">
+            <label htmlFor="agent-strategy" className="block text-sm text-teal-200">
               Strategy *
             </label>
             <select
               id="agent-strategy"
               value={formData.strategy}
               onChange={(e) => handleInputChange('strategy', e.target.value)}
-              className={`w-full px-3 py-2 bg-teal-800/30 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400 ${
-                errors.strategy ? 'border-red-400' : 'border-teal-400/30'
-              }`}
+              className={`w-full px-3 py-2 bg-slate-800/50 border rounded-lg text-white focus:outline-none focus:ring-1 focus:ring-teal-400/50 focus:border-teal-400/50 transition-all cursor-pointer text-sm ${errors.strategy ? 'border-red-400/60' : 'border-teal-400/20 hover:border-teal-400/40'
+                }`}
               disabled={isSubmitting || isLoading}
             >
               {AVAILABLE_STRATEGIES.map(strategy => (
-                <option key={strategy.value} value={strategy.value} className="bg-teal-800">
+                <option key={strategy.value} value={strategy.value} className="bg-slate-800 text-white">
                   {strategy.label}
                 </option>
               ))}
             </select>
             {errors.strategy && (
-              <p className="text-red-300 text-sm mt-1">{errors.strategy}</p>
-            )}
-            {/* Strategy Description */}
-            {formData.strategy && (
-              <p className="text-teal-300/70 text-sm mt-1">
-                {AVAILABLE_STRATEGIES.find(s => s.value === formData.strategy)?.description}
-              </p>
+              <p className="text-red-300 text-xs">{errors.strategy}</p>
             )}
           </div>
 
           {/* Tool Selection */}
-          <div>
-            <label className="block text-sm font-medium text-teal-200 mb-2">
-              Tools * (Select at least one)
+          <div className="space-y-2">
+            <label className="block text-sm text-teal-200">
+              Tools *
             </label>
-            <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-hide">
+            <div className="space-y-2">
               {AVAILABLE_TOOLS.map(tool => (
                 <label
                   key={tool.value}
-                  className="flex items-start space-x-3 p-3 bg-teal-800/20 rounded-lg hover:bg-teal-800/30 transition-colors cursor-pointer"
+                  className="flex items-center space-x-3 p-3 bg-slate-800/40 border border-teal-400/10 rounded-lg hover:border-teal-400/30 hover:bg-slate-800/60 transition-all cursor-pointer"
                 >
                   <input
                     type="checkbox"
                     checked={formData.tools.includes(tool.value)}
                     onChange={() => handleToolToggle(tool.value)}
-                    className="mt-1 w-4 h-4 text-teal-400 bg-teal-800/30 border-teal-400/30 rounded focus:ring-teal-400 focus:ring-2"
+                    className="w-4 h-4 text-teal-400 bg-slate-800/50 border-teal-400/30 rounded focus:ring-teal-400/50 focus:ring-1 cursor-pointer"
                     disabled={isSubmitting || isLoading}
                   />
                   <div className="flex-1">
-                    <div className="text-white font-medium">{tool.label}</div>
-                    <div className="text-teal-300/70 text-sm">{tool.description}</div>
+                    <div className="text-white text-sm font-medium">
+                      {tool.label}
+                    </div>
+                    <div className="text-teal-300/70 text-xs">
+                      {tool.description}
+                    </div>
                   </div>
                 </label>
               ))}
             </div>
             {errors.tools && (
-              <p className="text-red-300 text-sm mt-1">{errors.tools}</p>
+              <p className="text-red-300 text-xs">{errors.tools}</p>
             )}
-            <p className="text-teal-300/60 text-xs mt-1">
-              {formData.tools.length} tool{formData.tools.length !== 1 ? 's' : ''} selected
-            </p>
           </div>
 
           {/* Trigger Type - Hidden but functional (defaults to webhook) */}
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-teal-400/20">
+          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-teal-400/10">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting || isLoading}
-              className="px-4 py-2 text-teal-300 hover:text-white transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-teal-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting || isLoading}
-              className="px-6 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              className="px-5 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center space-x-2 text-sm font-medium"
             >
               {(isSubmitting || isLoading) && (
-                <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               )}
-              <span>{isSubmitting || isLoading ? 'Creating...' : 'Create Agent'}</span>
+              {!(isSubmitting || isLoading) && (
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              )}
+              <span>{isSubmitting || isLoading ? 'Creating...' : 'Create'}</span>
             </button>
           </div>
         </form>

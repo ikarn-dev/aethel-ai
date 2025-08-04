@@ -12,7 +12,7 @@ import {
 import { AgentList } from './agent-list';
 import { CreateAgentModal } from './create-agent-modal';
 import { Toast } from './toast';
-import { ConnectionStatus } from './connection-status';
+
 
 interface ToastState {
   show: boolean;
@@ -237,41 +237,57 @@ export function AgentManagementPage() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-slate-900">
       {/* Agent Management Layout */}
-      <div className="w-full bg-white flex flex-col">
+      <div className="w-full bg-slate-900 flex flex-col">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">Agent Management</h1>
-              <p className="text-sm text-gray-500 mt-1">
-                {enhancedAgents.length} agent{enhancedAgents.length !== 1 ? 's' : ''} available
-              </p>
+        <div className="relative p-8 border-b border-slate-700/30 bg-gradient-to-r from-slate-800/60 via-slate-800/50 to-slate-800/60 backdrop-blur-md">
+          {/* Subtle background pattern */}
+          <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 via-transparent to-cyan-500/5"></div>
+          
+          <div className="relative flex items-center justify-between">
+            <div className="space-y-2">
+              {/* Title with custom font */}
+              <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-100 to-teal-200 tracking-tight" 
+                  style={{ fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
+                Agent Management
+              </h1>
+              
+              {/* Subtitle with enhanced styling */}
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
+                <p className="text-sm font-medium text-gray-300 tracking-wide" 
+                   style={{ fontFamily: 'SF Pro Display, system-ui, sans-serif' }}>
+                  <span className="text-teal-400 font-semibold">{enhancedAgents.length}</span> agent{enhancedAgents.length !== 1 ? 's' : ''} available
+                </p>
+              </div>
             </div>
+            
+            {/* Create Button */}
             <button
               onClick={handleCreateAgent}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="relative inline-flex items-center px-6 py-3 border border-teal-400/30 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-teal-600/80 to-cyan-600/80 hover:from-teal-500 hover:to-cyan-500 hover:border-teal-400/50 focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:ring-offset-2 focus:ring-offset-slate-800 transition-all duration-200 cursor-pointer shadow-lg hover:shadow-teal-500/25"
+              style={{ fontFamily: 'SF Pro Display, system-ui, sans-serif' }}
             >
-              <svg
-                className="w-4 h-4 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              Create Agent
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-teal-400/10 to-cyan-400/10 blur-sm"></div>
+              <div className="relative flex items-center">
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                Create Agent
+              </div>
             </button>
           </div>
-
-          {/* Connection Status */}
-          <ConnectionStatus showDetails={true} />
         </div>
 
         {/* Agent List */}

@@ -243,29 +243,25 @@ export class AgentService {
   // Retry-enabled methods
   async getAgentsWithRetry(): Promise<ApiResponse<Agent[]>> {
     return this.retryHandler.executeWithRetry(
-      () => this.getAgents(),
-      'getAgents'
+      () => this.getAgents()
     );
   }
 
   async getAgentByIdWithRetry(id: string): Promise<ApiResponse<Agent>> {
     return this.retryHandler.executeWithRetry(
-      () => this.getAgentById(id),
-      'getAgentById'
+      () => this.getAgentById(id)
     );
   }
 
   async updateAgentStateWithRetry(id: string, newState: AgentState): Promise<ApiResponse<Agent>> {
     return this.retryHandler.executeWithRetry(
-      () => this.updateAgentState(id, newState),
-      'updateAgentState'
+      () => this.updateAgentState(id, newState)
     );
   }
 
   async getAgentStatusWithRetry(id: string): Promise<ApiResponse<AgentStatus>> {
     return this.retryHandler.executeWithRetry(
-      () => this.getAgentStatus(id),
-      'getAgentStatus'
+      () => this.getAgentStatus(id)
     );
   }
 

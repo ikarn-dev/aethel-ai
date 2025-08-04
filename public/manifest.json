@@ -1,0 +1,23 @@
+{
+  "name": "Aethel AI",
+  "short_name": "Aethel AI",
+  "description": "Next Generation AI Platform - Create, manage, and interact with multiple AI agents",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#14B8A6",
+  "icons": [
+    {
+      "src": "/assets/logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/aethel-ai-icon.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

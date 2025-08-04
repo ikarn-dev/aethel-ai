@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import NavigationErrorFallback from '@/components/navigation-error-fallback';
+import NavigationErrorFallback from '@/components/navigation/navigation-error-fallback';
 
 interface ErrorPageProps {
   error: Error & { digest?: string };

@@ -127,27 +127,7 @@ export function validateToolConfig(tool: ToolConfig): ValidationResult {
   };
 }
 
-/**
- * Validate agent state transition
- */
-export function validateStateTransition(currentState: AgentState, newState: AgentState): ValidationResult {
-  const errors: string[] = [];
 
-  const validTransitions: Record<AgentState, AgentState[]> = {
-    'CREATED': ['RUNNING', 'STOPPED'],
-    'RUNNING': ['STOPPED'],
-    'STOPPED': ['RUNNING']
-  };
-
-  if (!validTransitions[currentState]?.includes(newState)) {
-    errors.push(`Invalid state transition from ${currentState} to ${newState}`);
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors
-  };
-}
 
 /**
  * Validate agent ID format
@@ -203,56 +183,3 @@ export function generateAgentId(baseName?: string): string {
   return `agent-${timestamp}-${random}`;
 }
 
-/**
- * Validate batch operation input
- */
-export function validateBatchOperation<T>(
-  items: T[],
-  maxBatchSize: number = 10
-): ValidationResult {
-  const errors: string[] = [];
-
-  if (!Array.isArray(items)) {
-    errors.push('Batch operation requires an array of items');
-  }
-
-  if (items.length === 0) {
-    errors.push('Batch operation requires at least one item');
-  }
-
-  if (items.length > maxBatchSize) {
-    errors.push(`Batch operation cannot exceed ${maxBatchSize} items`);
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors
-  };
-}
-
-/**
- * Validate agent health check parameters
- */
-export function validateHealthCheckParams(params: {
-  maxResponseTime?: number;
-  maxInactiveTime?: number;
-}): ValidationResult {
-  const errors: string[] = [];
-
-  if (params.maxResponseTime !== undefined) {
-    if (typeof params.maxResponseTime !== 'number' || params.maxResponseTime <= 0) {
-      errors.push('Max response time must be a positive number');
-    }
-  }
-
-  if (params.maxInactiveTime !== undefined) {
-    if (typeof params.maxInactiveTime !== 'number' || params.maxInactiveTime <= 0) {
-      errors.push('Max inactive time must be a positive number');
-    }
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors
-  };
-}

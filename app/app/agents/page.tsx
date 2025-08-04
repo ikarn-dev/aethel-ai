@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { AgentManagementWrapper } from '../../../components/agent-management-wrapper';
+import { AgentManagementWrapper } from '../../../components/agents/agent-management-wrapper';
 
 export const metadata: Metadata = {
   title: 'Agents - Agent Management',

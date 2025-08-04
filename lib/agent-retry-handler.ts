@@ -30,8 +30,7 @@ export class AgentRetryHandler {
    * Execute operation with retry logic
    */
   async executeWithRetry<T>(
-    operation: () => Promise<ApiResponse<T>>,
-    operationName?: string
+    operation: () => Promise<ApiResponse<T>>
   ): Promise<RetryResult<T>> {
     let lastError: string = '';
     
@@ -86,27 +85,5 @@ export class AgentRetryHandler {
     };
   }
 
-  /**
-   * Create a network retry handler with appropriate settings
-   */
-  static createNetworkRetryHandler(): AgentRetryHandler {
-    return new AgentRetryHandler({
-      maxAttempts: 3,
-      baseDelay: 1000,
-      maxDelay: 5000,
-      backoffMultiplier: 2
-    });
-  }
 
-  /**
-   * Create an agent retry handler with appropriate settings
-   */
-  static createAgentRetryHandler(): AgentRetryHandler {
-    return new AgentRetryHandler({
-      maxAttempts: 2,
-      baseDelay: 500,
-      maxDelay: 2000,
-      backoffMultiplier: 1.5
-    });
-  }
 }

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Loading from "../components/loading";
-import Navbar from "../components/navbar";
+import Loading from "../components/ui/common/loading";
+import Navbar from "../components/navigation/navbar";
 
 export default function LandingPage() {
   const [showLoading, setShowLoading] = useState(true);

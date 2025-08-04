@@ -172,3 +172,39 @@ export interface NavigationState {
   activeItem: NavigationItemId;
   isInitialized: boolean;
 }
+
+// Wallet-related types
+export interface WalletConnectionState {
+  connected: boolean;
+  connecting: boolean;
+  disconnecting: boolean;
+  publicKey: string | null;
+  walletName: string | null;
+}
+
+export interface SolanaTransaction {
+  signature: string;
+  slot: number;
+  blockTime: number | null;
+  status: 'confirmed' | 'finalized' | 'processed';
+  amount?: number;
+  type: 'transfer' | 'program' | 'unknown';
+  from?: string;
+  to?: string;
+}
+
+export interface WalletBalance {
+  sol: number;
+  lamports: number;
+  tokens: TokenBalance[];
+  lastUpdated: number;
+}
+
+export interface TokenBalance {
+  mint: string;
+  amount: number;
+  decimals: number;
+  symbol?: string;
+  name?: string;
+  logoUri?: string;
+}
