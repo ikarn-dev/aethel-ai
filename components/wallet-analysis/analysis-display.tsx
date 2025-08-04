@@ -69,9 +69,9 @@ export function AnalysisDisplay({ analysis, onNewAnalysis }: AnalysisDisplayProp
           </div>
           
           <div className="bg-slate-800/40 rounded-lg p-4">
-            <div className="text-teal-300/70 text-sm">Total Value</div>
+            <div className="text-teal-300/70 text-sm">SOL Balance</div>
             <div className="text-white font-semibold text-lg">
-              ${walletData.totalBalanceUSD.toLocaleString()}
+              {walletData.nativeBalance.toFixed(4)} SOL
             </div>
           </div>
           
