@@ -50,18 +50,14 @@ export const useWallet = (): WalletHookReturn => {
   const { connection } = useConnection();
 
   // Balance state and refresh function
-  const refreshBalance = useCallback(async (): Promise<WalletBalance | null> => {
-    if (!publicKey || !connection) return null;
+  const refreshBalance = useCallback(async (): Promise<void> => {
+    if (!publicKey || !connection) return;
     
     try {
       const lamports = await connection.getBalance(publicKey);
-      return {
-        sol: lamports / LAMPORTS_PER_SOL,
-        lamports
-      };
+      // Balance is fetched but not stored since it's not used in UI
     } catch (error) {
       console.error('Failed to fetch balance:', error);
-      return null;
     }
   }, [publicKey, connection]);
 
