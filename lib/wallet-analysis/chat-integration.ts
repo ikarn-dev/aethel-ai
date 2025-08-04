@@ -78,7 +78,7 @@ export class WalletAnalysisChatIntegration {
 WALLET ANALYSIS DATA:
 ${JSON.stringify({
         address: analysis.walletData.address,
-        totalValue: analysis.walletData.totalBalanceUSD,
+        nativeBalance: analysis.walletData.nativeBalance,
         tokenCount: analysis.walletData.tokenBalances.length,
         transactionCount: analysis.walletData.totalTransactions,
         tradingMetrics: analysis.tradingMetrics,
