@@ -66,13 +66,13 @@ With a risk score of ${riskAssessment.riskScore}/10 (${riskAssessment.riskLevel}
 The wallet has executed ${tradingMetrics.totalTrades} trades with a ${tradingMetrics.winRate.toFixed(1)}% win rate and total volume of $${tradingMetrics.totalVolume.toLocaleString()}. This indicates ${tradingMetrics.tradingFrequency === 'high' ? 'active' : tradingMetrics.tradingFrequency === 'medium' ? 'moderate' : 'conservative'} trading behavior.
 
 ## Portfolio Optimization Recommendations
-${insights.recommendations.map(r => `• ${r}`).join('\n')}
+${insights.recommendations.map((r: string) => `• ${r}`).join('\n')}
 
 ## Key Strengths
-${insights.strengths.map(s => `• ${s}`).join('\n')}
+${insights.strengths.map((s: string) => `• ${s}`).join('\n')}
 
 ## Areas for Improvement
-${insights.weaknesses.map(w => `• ${w}`).join('\n')}
+${insights.weaknesses.map((w: string) => `• ${w}`).join('\n')}
 
 This analysis provides a comprehensive view of the wallet's performance and strategic positioning in the current market environment.
 `;
