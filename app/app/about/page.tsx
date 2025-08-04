@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 
 export default function AboutPage() {
@@ -35,9 +36,9 @@ export default function AboutPage() {
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="flex justify-center mb-4">
-                <img
-                  width="48"
-                  height="48"
+                <Image
+                  width={48}
+                  height={48}
                   src="https://img.icons8.com/ios-filled/50/12B886/ai-chatting.png"
                   alt="ai-chatting"
                   className="w-12 h-12"
@@ -48,9 +49,9 @@ export default function AboutPage() {
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-4">
-                <img
-                  width="48"
-                  height="48"
+                <Image
+                  width={48}
+                  height={48}
                   src="https://img.icons8.com/dotty/80/12B886/stocks-growth.png"
                   alt="stocks-growth"
                   className="w-12 h-12"
@@ -61,9 +62,9 @@ export default function AboutPage() {
             </div>
             <div className="text-center">
               <div className="flex justify-center mb-4">
-                <img
-                  width="48"
-                  height="48"
+                <Image
+                  width={48}
+                  height={48}
                   src="https://img.icons8.com/ios/50/12B886/link--v1.png"
                   alt="link"
                   className="w-12 h-12"

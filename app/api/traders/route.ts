@@ -4,7 +4,7 @@ const BIRDEYE_API_URL = 'https://public-api.birdeye.so';
 const BIRDEYE_API_KEY = process.env.BIRDEYE_API_KEY;
 
 // Rate limiting state (in production, use Redis or similar)
-let rateLimitState = {
+const rateLimitState = {
   requestCount: 0,
   minuteRequestCount: 0,
   lastRequestTime: 0,

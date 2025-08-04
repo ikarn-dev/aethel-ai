@@ -21,9 +21,9 @@ interface NavigationItem {
 
 // Custom Agent Icon Component
 const AgentIcon = ({ className }: { className?: string }) => (
-  <img 
-    width="20" 
-    height="20" 
+  <Image 
+    width={20} 
+    height={20} 
     src="https://img.icons8.com/ios-filled/50/12B886/ai-chatting.png" 
     alt="ai-chatting"
     className={className}
@@ -32,9 +32,9 @@ const AgentIcon = ({ className }: { className?: string }) => (
 
 // Custom Chat Icon Component
 const ChatIcon = ({ className }: { className?: string }) => (
-  <img 
-    width="20" 
-    height="20" 
+  <Image 
+    width={20} 
+    height={20} 
     src="https://img.icons8.com/windows/32/12B886/chat-message.png" 
     alt="chat-message"
     className={className}
@@ -43,9 +43,9 @@ const ChatIcon = ({ className }: { className?: string }) => (
 
 // Custom Traders Icon Component
 const TradersIcon = ({ className }: { className?: string }) => (
-  <img 
-    width="20" 
-    height="20" 
+  <Image 
+    width={20} 
+    height={20} 
     src="https://img.icons8.com/dotty/80/12B886/stocks-growth.png" 
     alt="stocks-growth"
     className={className}
@@ -54,9 +54,9 @@ const TradersIcon = ({ className }: { className?: string }) => (
 
 // Custom About Icon Component
 const AboutIcon = ({ className }: { className?: string }) => (
-  <img 
-    width="20" 
-    height="20" 
+  <Image 
+    width={20} 
+    height={20} 
     src="https://img.icons8.com/ios/50/12B886/info--v1.png" 
     alt="info"
     className={className}
@@ -65,9 +65,9 @@ const AboutIcon = ({ className }: { className?: string }) => (
 
 // Custom Contact Icon Component
 const ContactIcon = ({ className }: { className?: string }) => (
-  <img 
-    width="20" 
-    height="20" 
+  <Image 
+    width={20} 
+    height={20} 
     src="https://img.icons8.com/ios/50/12B886/contact-card.png" 
     alt="contact-card"
     className={className}
@@ -76,9 +76,9 @@ const ContactIcon = ({ className }: { className?: string }) => (
 
 // Custom Documentation Icon Component
 const DocsIcon = ({ className }: { className?: string }) => (
-  <img 
-    width="20" 
-    height="20" 
+  <Image 
+    width={20} 
+    height={20} 
     src="https://img.icons8.com/ios/50/12B886/book.png" 
     alt="documentation"
     className={className}

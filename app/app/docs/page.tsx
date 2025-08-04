@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ChevronRight, Zap, Shield, ExternalLink } from 'lucide-react';
 
 export default function DocsPage() {
@@ -10,9 +11,9 @@ export default function DocsPage() {
 
   // Custom Icon Components (relevant for documentation sections)
   const OverviewIcon = ({ className }: { className?: string }) => (
-    <img
-      width="20"
-      height="20"
+    <Image
+      width={20}
+      height={20}
       src="https://img.icons8.com/ios/50/12B886/home--v1.png"
       alt="overview"
       className={className}
@@ -20,9 +21,9 @@ export default function DocsPage() {
   );
 
   const GettingStartedIcon = ({ className }: { className?: string }) => (
-    <img
-      width="20"
-      height="20"
+    <Image
+      width={20}
+      height={20}
       src="https://img.icons8.com/ios/50/12B886/rocket.png"
       alt="getting-started"
       className={className}
@@ -30,9 +31,9 @@ export default function DocsPage() {
   );
 
   const AgentIcon = ({ className }: { className?: string }) => (
-    <img
-      width="20"
-      height="20"
+    <Image
+      width={20}
+      height={20}
       src="https://img.icons8.com/ios-filled/50/12B886/ai-chatting.png"
       alt="ai-agents"
       className={className}
@@ -40,9 +41,9 @@ export default function DocsPage() {
   );
 
   const ChatIcon = ({ className }: { className?: string }) => (
-    <img
-      width="20"
-      height="20"
+    <Image
+      width={20}
+      height={20}
       src="https://img.icons8.com/windows/32/12B886/chat-message.png"
       alt="chat-interface"
       className={className}
@@ -50,9 +51,9 @@ export default function DocsPage() {
   );
 
   const AnalysisIcon = ({ className }: { className?: string }) => (
-    <img
-      width="20"
-      height="20"
+    <Image
+      width={20}
+      height={20}
       src="https://img.icons8.com/ink/48/12B886/whale.png"
       alt="smart-money-whale"
       className={className}
@@ -60,9 +61,9 @@ export default function DocsPage() {
   );
 
   const IntegrationIcon = ({ className }: { className?: string }) => (
-    <img
-      width="20"
-      height="20"
+    <Image
+      width={20}
+      height={20}
       src="https://img.icons8.com/ios/50/12B886/link--v1.png"
       alt="wallet-integration"
       className={className}
@@ -70,9 +71,9 @@ export default function DocsPage() {
   );
 
   const ApiIcon = ({ className }: { className?: string }) => (
-    <img
-      width="20"
-      height="20"
+    <Image
+      width={20}
+      height={20}
       src="https://img.icons8.com/ios/50/12B886/api.png"
       alt="api-reference"
       className={className}
@@ -80,9 +81,9 @@ export default function DocsPage() {
   );
 
   const ArchitectureIcon = ({ className }: { className?: string }) => (
-    <img
-      width="20"
-      height="20"
+    <Image
+      width={20}
+      height={20}
       src="https://img.icons8.com/ios/50/12B886/blueprint.png"
       alt="architecture"
       className={className}
@@ -90,9 +91,9 @@ export default function DocsPage() {
   );
 
   const TroubleshootingIcon = ({ className }: { className?: string }) => (
-    <img
-      width="20"
-      height="20"
+    <Image
+      width={20}
+      height={20}
       src="https://img.icons8.com/ios/50/12B886/wrench.png"
       alt="troubleshooting"
       className={className}
@@ -929,7 +930,7 @@ Frontend → Proxy API → JuliaOS Backend → Julia Core Engine
               {/* Quick Actions */}
               <div className="bg-gradient-to-br from-slate-800/80 via-slate-800/60 to-slate-900/80 backdrop-blur-md border border-slate-700/30 rounded-2xl p-6 shadow-xl">
                 <h3 className="text-sm font-bold text-white mb-4 flex items-center">
-                  <img width="16" height="16" src="https://img.icons8.com/hatch/64/12B886/quick-mode-on.png" alt="quick-mode-on" className="mr-2" />
+                  <Image width={16} height={16} src="https://img.icons8.com/hatch/64/12B886/quick-mode-on.png" alt="quick-mode-on" className="mr-2" />
                   Quick Actions
                 </h3>
                 <div className="space-y-3">
@@ -938,7 +939,7 @@ Frontend → Proxy API → JuliaOS Backend → Julia Core Engine
                     className="flex items-center space-x-3 p-3 bg-slate-700/30 hover:bg-teal-900/30 border border-slate-600/30 hover:border-teal-500/30 rounded-xl transition-all group"
                   >
                     <div className="w-8 h-8 bg-teal-500/20 rounded-lg flex items-center justify-center">
-                      <img width="16" height="16" src="https://img.icons8.com/ios-filled/50/12B886/ai-chatting.png" alt="create-agent" />
+                      <Image width={16} height={16} src="https://img.icons8.com/ios-filled/50/12B886/ai-chatting.png" alt="create-agent" />
                     </div>
                     <div className="flex-1">
                       <div className="text-sm font-medium text-white group-hover:text-teal-300">Create Agent</div>
@@ -952,7 +953,7 @@ Frontend → Proxy API → JuliaOS Backend → Julia Core Engine
                     className="flex items-center space-x-3 p-3 bg-slate-700/30 hover:bg-cyan-900/30 border border-slate-600/30 hover:border-cyan-500/30 rounded-xl transition-all group"
                   >
                     <div className="w-8 h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-                      <img width="16" height="16" src="https://img.icons8.com/windows/32/12B886/chat-message.png" alt="start-chat" />
+                      <Image width={16} height={16} src="https://img.icons8.com/windows/32/12B886/chat-message.png" alt="start-chat" />
                     </div>
                     <div className="flex-1">
                       <div className="text-sm font-medium text-white group-hover:text-cyan-300">Start Chat</div>
