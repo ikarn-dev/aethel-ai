@@ -86,7 +86,7 @@ This analysis provides a comprehensive view of the wallet's performance and stra
 
 ## 📊 Portfolio Overview
 - **Wallet**: \`${walletData.address.slice(0, 6)}...${walletData.address.slice(-4)}\`
-- **Total Value**: $${walletData.totalBalanceUSD.toLocaleString()}
+- **SOL Balance**: ${walletData.nativeBalance.toFixed(4)} SOL
 - **Tokens**: ${walletData.tokenBalances.length}
 - **Transactions**: ${walletData.totalTransactions}
 

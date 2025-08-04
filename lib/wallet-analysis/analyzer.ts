@@ -155,9 +155,11 @@ export class WalletAnalyzer {
   private calculateLiquidityRisk(tokenBalances: any[], defiPositions: any[]): number {
     let risk = 3; // Base risk
     
-    // Check for low-cap tokens (simplified)
-    const lowCapTokens = tokenBalances.filter(token => token.balanceUSD < 1000).length;
-    risk += Math.min(3, lowCapTokens * 0.5);
+    // Check for token diversity (simplified risk assessment)
+    const tokenCount = tokenBalances.length;
+    if (tokenCount > 10) {
+      risk += 1; // Many tokens can indicate higher risk
+    }
     
     // DeFi positions add liquidity risk
     risk += Math.min(2, defiPositions.length * 0.3);
@@ -165,23 +167,7 @@ export class WalletAnalyzer {
     return Math.min(10, risk);
   }
 
-  private calculateSmartContractRisk(defiPositions: any[], totalBalanceUSD: number): number {
-    if (defiPositions.length === 0) return 1;
-    
-    const defiExposure = defiPositions.reduce((sum, pos) => sum + pos.amountUSD, 0);
-    const exposureRatio = defiExposure / totalBalanceUSD;
-    
-    return Math.min(10, 1 + exposureRatio * 9);
-  }
 
-  private calculateConcentrationRisk(tokenBalances: any[], totalBalanceUSD: number): number {
-    if (tokenBalances.length === 0) return 10;
-    
-    const largestPosition = Math.max(...tokenBalances.map(token => token.balanceUSD));
-    const concentrationRatio = largestPosition / totalBalanceUSD;
-    
-    return Math.min(10, concentrationRatio * 10);
-  }
 
   private generateRiskWarnings(riskScore: number, factors: any): string[] {
     const warnings: string[] = [];
