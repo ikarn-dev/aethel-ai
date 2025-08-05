@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Loading from "../components/ui/common/loading";
 import Navbar from "../components/navigation/navbar";
 
@@ -16,16 +17,23 @@ export default function LandingPage() {
     prostoLink.href = 'https://fonts.googleapis.com/css2?family=Prosto+One&display=swap';
     prostoLink.rel = 'stylesheet';
     document.head.appendChild(prostoLink);
-    
+
     // Import Nova Flat font for FAQ section
     const novaLink = document.createElement('link');
     novaLink.href = 'https://fonts.googleapis.com/css2?family=Nova+Flat&display=swap';
     novaLink.rel = 'stylesheet';
     document.head.appendChild(novaLink);
-    
+
+    // Import Inter font for feature cards
+    const interLink = document.createElement('link');
+    interLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap';
+    interLink.rel = 'stylesheet';
+    document.head.appendChild(interLink);
+
     return () => {
       document.head.removeChild(prostoLink);
       document.head.removeChild(novaLink);
+      document.head.removeChild(interLink);
     };
   }, []);
 
@@ -48,118 +56,315 @@ export default function LandingPage() {
         <Navbar />
 
         {/* Hero Section */}
-        <section className="relative px-6 py-20 pt-32">
-          <div className="max-w-7xl mx-auto">
+        <section className="relative px-6 py-20 pt-32 min-h-screen flex items-center overflow-hidden">
+          {/* Hero Video Background */}
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover z-0"
+          >
+            <source src="/landing-page/hero-video.mp4" type="video/mp4" />
+          </video>
+
+          {/* Video Overlay */}
+          <div className="absolute inset-0 bg-slate-900/70 z-5" />
+
+          {/* Background Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-teal-900/30 via-slate-800/40 to-slate-900/50 pointer-events-none z-5" />
+
+          <div className="max-w-7xl mx-auto w-full relative z-10">
             <div className="text-center">
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                Next Generation
+              {/* Main Heading - Reduced Size with Better Alignment */}
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight tracking-tight max-w-5xl mx-auto">
+                From wallet analysis to
                 <br />
-                <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-                  AI Platform
-                </span>
+                <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">intelligent agent management</span>
               </h1>
 
-              <p className="text-xl md:text-2xl text-teal-100/80 mb-12 max-w-4xl mx-auto leading-relaxed">
-                Experience the future of artificial intelligence with Aethel AI.
-                Discover, create, and innovate with cutting-edge AI technology designed for modern workflows.
+              {/* Subtitle */}
+              <p className="text-base md:text-lg text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+                Powered by JuliaOS framework for AI-driven Solana blockchain insights and smart money analysis
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+              {/* CTA Buttons - Teal & Dark Theme */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                <button
+                  onClick={() => document.getElementById('features-section')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-8 py-3 rounded-full font-medium text-base hover:from-teal-600 hover:to-cyan-600 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-teal-500/25"
+                >
+                  Explore Features
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
                 <Link
                   href="/app/agents"
                   prefetch={true}
-                  className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-10 py-4 rounded-xl font-semibold text-lg hover:from-teal-600 hover:to-cyan-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-teal-500/25"
+                  className="bg-slate-800/50 border border-teal-400/30 text-teal-100 px-8 py-3 rounded-full font-medium text-base hover:bg-slate-700/50 hover:border-teal-400/50 transition-all duration-300 flex items-center gap-2 backdrop-blur-sm"
                 >
-                  Manage Your Agents
+                  Start Analysis
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </Link>
-                <button className="border-2 border-teal-400/50 text-teal-100 px-10 py-4 rounded-xl font-semibold text-lg hover:bg-teal-500/10 hover:border-teal-400 transition-all duration-300 backdrop-blur-sm">
-                  Watch Demo
-                </button>
               </div>
 
-              {/* Hero Visual Element */}
-              <div className="relative max-w-4xl mx-auto">
-                <div className="bg-teal-500/10 backdrop-blur-md border border-teal-400/30 rounded-2xl p-8 shadow-2xl">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-teal-600/20 rounded-xl p-6 border border-teal-500/30">
-                      <div className="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center mb-4">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                      </div>
-                      <h3 className="text-white font-semibold mb-2">Lightning Fast</h3>
-                      <p className="text-teal-200/70 text-sm">Instant AI responses with optimized performance</p>
-                    </div>
+              {/* Hero Image */}
+              <div className="relative max-w-6xl mx-auto">
+                <div className="relative bg-teal-500/10 backdrop-blur-md border border-teal-400/30 rounded-2xl p-1 shadow-2xl overflow-hidden">
+                  {/* Revolving Pulse Border */}
+                  <div
+                    className="absolute inset-0 rounded-2xl pointer-events-none"
+                    style={{
+                      background: `conic-gradient(from 0deg, transparent 70%, rgba(20, 184, 166, 0.8) 85%, rgba(6, 182, 212, 0.8) 90%, transparent 100%)`,
+                      animation: 'revolve 3s linear infinite',
+                      zIndex: 1
+                    }}
+                  />
 
-                    <div className="bg-teal-600/20 rounded-xl p-6 border border-teal-500/30">
-                      <div className="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center mb-4">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <h3 className="text-white font-semibold mb-2">Intelligent</h3>
-                      <p className="text-teal-200/70 text-sm">Advanced AI models for accurate insights</p>
-                    </div>
-
-                    <div className="bg-teal-600/20 rounded-xl p-6 border border-teal-500/30">
-                      <div className="w-12 h-12 bg-teal-400 rounded-lg flex items-center justify-center mb-4">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                      </div>
-                      <h3 className="text-white font-semibold mb-2">Secure</h3>
-                      <p className="text-teal-200/70 text-sm">Enterprise-grade security and privacy</p>
-                    </div>
+                  {/* Inner container */}
+                  <div className="relative rounded-xl overflow-hidden bg-slate-900/20 backdrop-blur-sm" style={{ display: 'inline-block', width: '100%', zIndex: 2 }}>
+                    <Image
+                      src="/landing-page/hero-image.png"
+                      alt="Aethel AI Platform Interface - AI-driven Solana blockchain insights and agent management"
+                      width={1200}
+                      height={800}
+                      className="w-full h-auto rounded-xl"
+                      priority
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                    />
                   </div>
                 </div>
               </div>
+
+              {/* CSS Animation Styles */}
+              <style jsx>{`
+                @keyframes revolve {
+                  0% {
+                    transform: rotate(0deg);
+                  }
+                  100% {
+                    transform: rotate(360deg);
+                  }
+                }
+              `}</style>
             </div>
           </div>
         </section>
 
         {/* Features Section */}
-        <section className="py-20 px-6">
+        <section id="features-section" className="py-20 px-6 bg-slate-900/50">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                Powerful Features
+                Aethel AI Features
               </h2>
               <p className="text-xl text-teal-200/80 max-w-3xl mx-auto">
-                Discover the capabilities that make Aethel AI the perfect choice for your workflow
+                Simplifying blockchain analysis and AI agent management for everyone
               </p>
             </div>
 
-            {/* Features will be added here */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Feature cards will be implemented later */}
-              <div className="bg-teal-500/10 backdrop-blur-md border border-teal-400/30 rounded-xl p-8 text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
+            {/* Performance Metrics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start mb-16">
+              {/* 100x Faster Card */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+                <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-6 text-center hover:border-teal-400/50 transition-all duration-300 min-h-[200px] flex flex-col justify-center">
+                  {/* Decorative dots */}
+                  <div className="absolute top-4 left-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="absolute top-4 right-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                  </div>
+
+                  <div className="py-4">
+                    <div className="text-3xl md:text-4xl font-bold mb-2">
+                      <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">100x</span>
+                      <span className="text-white ml-2">Faster</span>
+                    </div>
+                    <div className="w-12 h-0.5 bg-gradient-to-r from-teal-400 to-cyan-400 mx-auto mb-3"></div>
+                    <p className="text-teal-200/80 text-sm">Agent Response Time</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">Smart Conversations</h3>
-                <p className="text-teal-200/70">Engage in natural, context-aware conversations with advanced AI</p>
               </div>
 
-              <div className="bg-teal-500/10 backdrop-blur-md border border-teal-400/30 rounded-xl p-8 text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
+              {/* 10x More Productive Card */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+                <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-6 text-center hover:border-teal-400/50 transition-all duration-300 min-h-[200px] flex flex-col justify-center">
+                  {/* Decorative dots */}
+                  <div className="absolute top-4 left-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="absolute top-4 right-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                  </div>
+
+                  <div className="py-4">
+                    <div className="text-3xl md:text-4xl font-bold mb-1">
+                      <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">10x</span>
+                      <span className="text-white ml-2">More</span>
+                    </div>
+                    <div className="text-xl font-bold text-white mb-2">Productive</div>
+                    <div className="w-12 h-0.5 bg-gradient-to-r from-teal-400 to-cyan-400 mx-auto mb-3"></div>
+                    <p className="text-teal-200/80 text-sm">User-Friendly Interface</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">Data Analytics</h3>
-                <p className="text-teal-200/70">Transform your data into actionable insights with AI-powered analysis</p>
               </div>
 
-              <div className="bg-teal-500/10 backdrop-blur-md border border-teal-400/30 rounded-xl p-8 text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                  </svg>
+              {/* 90% Efficiency Card */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+                <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-6 text-center hover:border-teal-400/50 transition-all duration-300 min-h-[200px] flex flex-col justify-center">
+                  {/* Decorative dots */}
+                  <div className="absolute top-4 left-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="absolute top-4 right-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                  </div>
+
+                  <div className="py-4">
+                    <div className="text-3xl md:text-4xl font-bold mb-1">
+                      <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">90%</span>
+                    </div>
+                    <div className="text-xl font-bold text-white mb-2">Efficiency</div>
+                    <div className="w-12 h-0.5 bg-gradient-to-r from-teal-400 to-cyan-400 mx-auto mb-3"></div>
+                    <p className="text-teal-200/80 text-sm">in Blockchain Analysis</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-4">Code Assistant</h3>
-                <p className="text-teal-200/70">Write, debug, and optimize code with intelligent AI assistance</p>
+              </div>
+
+              {/* 10x Faster Card */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+                <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-6 text-center hover:border-teal-400/50 transition-all duration-300 min-h-[200px] flex flex-col justify-center">
+                  {/* Decorative dots */}
+                  <div className="absolute top-4 left-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="absolute top-4 right-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                  </div>
+
+                  <div className="py-4">
+                    <div className="text-3xl md:text-4xl font-bold mb-2">
+                      <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">10x</span>
+                      <span className="text-white ml-2">Faster</span>
+                    </div>
+                    <div className="w-12 h-0.5 bg-gradient-to-r from-teal-400 to-cyan-400 mx-auto mb-3"></div>
+                    <p className="text-teal-200/80 text-sm">Setup & Deployment</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8" style={{ fontFamily: '"Inter", sans-serif' }}>
+              {/* Smart Money Analysis Card */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+                <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-8 hover:border-teal-400/50 transition-all duration-300 h-[280px] flex flex-col">
+                  {/* Decorative dots */}
+                  <div className="absolute top-4 left-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="absolute top-4 right-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                  </div>
+
+                  <div className="pt-8 flex-1">
+                    <h3 className="text-xl font-bold text-white mb-3">Smart Money Analysis</h3>
+                    <p className="text-teal-200/80 text-sm mb-4">AI-powered Solana wallet analysis with comprehensive trading insights</p>
+                    <ul className="text-teal-200/70 text-sm space-y-2">
+                      <li>• Helius RPC integration for real-time data</li>
+                      <li>• Trading metrics & P&L calculations</li>
+                      <li>• Risk scoring & behavioral patterns</li>
+                      <li>• Gemini AI-powered recommendations</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* JuliaOS Backend Integration Card */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+                <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-8 hover:border-teal-400/50 transition-all duration-300 h-[280px] flex flex-col">
+                  {/* Decorative dots */}
+                  <div className="absolute top-4 left-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="absolute top-4 right-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                  </div>
+
+                  <div className="pt-8 flex-1">
+                    <h3 className="text-xl font-bold text-white mb-3">JuliaOS Backend Integration</h3>
+                    <p className="text-teal-200/80 text-sm mb-4">High-performance Julia framework with enterprise-grade infrastructure</p>
+                    <ul className="text-teal-200/70 text-sm space-y-2">
+                      <li>• Multi-layered architecture with Julia core</li>
+                      <li>• Agent orchestration & swarm algorithms</li>
+                      <li>• RESTful API with webhook support</li>
+                      <li>• Rust security layer for crypto operations</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Agent Lifecycle Management Card */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+                <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-8 hover:border-teal-400/50 transition-all duration-300 h-[280px] flex flex-col">
+                  {/* Decorative dots */}
+                  <div className="absolute top-4 left-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="absolute top-4 right-4 flex space-x-1">
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                    <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                  </div>
+
+                  <div className="pt-8 flex-1">
+                    <h3 className="text-xl font-bold text-white mb-3">Agent Lifecycle Management</h3>
+                    <p className="text-teal-200/80 text-sm mb-4">Complete agent management with real-time monitoring and control</p>
+                    <ul className="text-teal-200/70 text-sm space-y-2">
+                      <li>• Create, start, stop & delete operations</li>
+                      <li>• Real-time status monitoring & health checks</li>
+                      <li>• Chat persistence & message templates</li>
+                      <li>• Batch operations with optimistic UI</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -175,14 +380,65 @@ export default function LandingPage() {
               Experience the power of our AI platform through interactive demonstrations
             </p>
 
-            {/* Demo content will be added here */}
-            <div className="bg-teal-500/10 backdrop-blur-md border border-teal-400/30 rounded-2xl p-16">
-              <div className="text-teal-300/60">
-                <svg className="w-24 h-24 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p className="text-lg text-teal-200/60">Interactive demo coming soon...</p>
+            {/* Demo Video */}
+            <div className="relative max-w-5xl mx-auto">
+              <div className="relative bg-teal-500/10 backdrop-blur-md border border-teal-400/30 rounded-2xl p-4 shadow-2xl overflow-hidden">
+                {/* Revolving Pulse Border */}
+                <div
+                  className="absolute inset-0 rounded-2xl pointer-events-none"
+                  style={{
+                    background: `conic-gradient(from 0deg, transparent 70%, rgba(20, 184, 166, 0.6) 85%, rgba(6, 182, 212, 0.6) 90%, transparent 100%)`,
+                    animation: 'demoRevolve 4s linear infinite',
+                    zIndex: 1
+                  }}
+                />
+
+                {/* Decorative dots */}
+                <div className="absolute top-6 left-6 flex space-x-1 z-20">
+                  <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                  <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                  <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                </div>
+                <div className="absolute top-6 right-6 flex space-x-1 z-20">
+                  <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+                  <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
+                  <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+                </div>
+
+                <div className="relative rounded-xl overflow-hidden bg-slate-900/20 backdrop-blur-sm z-10">
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    controls
+                    className="w-full h-auto rounded-xl"
+                    preload="auto"
+                  >
+                    <source src="/landing-page/demo-video.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
               </div>
+
+              {/* Video description */}
+              <div className="mt-6 text-center">
+                <p className="text-teal-200/80 text-sm max-w-2xl mx-auto">
+                  Watch how Aethel AI simplifies blockchain analysis and agent management with its intuitive interface and powerful JuliaOS backend integration.
+                </p>
+              </div>
+
+              {/* CSS Animation Styles for Demo Video */}
+              <style jsx>{`
+                @keyframes demoRevolve {
+                  0% {
+                    transform: rotate(0deg);
+                  }
+                  100% {
+                    transform: rotate(360deg);
+                  }
+                }
+              `}</style>
             </div>
           </div>
         </section>
