@@ -1,7 +1,5 @@
-# Aethel AI - Next Generation AI Platform
+# Aethel AI - Powered by JuliaOS
 
-<div align="center">
-  <img src="/assets/logo.png" alt="Aethel AI Logo" width="120" height="120">
   
   **A sophisticated AI platform built on the JuliaOS framework, specializing in Solana wallet analysis and intelligent agent management for the blockchain ecosystem.**
 
