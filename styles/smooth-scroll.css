@@ -1,0 +1,39 @@
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Account for navbar */
+}
+
+/* Enhanced smooth scrolling with CSS */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Optimize for 60fps/120fps scrolling */
+body {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+}
+
+/* Smooth scroll container */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* GPU acceleration for smooth animations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}

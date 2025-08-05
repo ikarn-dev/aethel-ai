@@ -18,13 +18,13 @@ export const metadata: Metadata = {
   description: "Create, manage, and interact with multiple AI agents. Experience comprehensive agent lifecycle management with Aethel AI's intuitive interface.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/assets/logo.png",
-    apple: "/assets/logo.png",
+    icon: "/favicon.ico",
+    apple: "/favicon.ico",
   },
   other: {
     "wallet-connect-name": "Aethel AI",
     "wallet-connect-description": "Next Generation AI Platform",
-    "wallet-connect-icon": "/assets/logo.png",
+    "wallet-connect-icon": "/favicon.ico",
   }
 };
 
@@ -36,12 +36,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/assets/logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/assets/logo.png" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="apple-touch-icon" href="/favicon.ico" />
         <meta name="application-name" content="Aethel AI" />
         <meta name="apple-mobile-web-app-title" content="Aethel AI" />
         <meta property="og:site_name" content="Aethel AI" />
-        <meta property="og:image" content="/assets/logo.png" />
+        <meta property="og:image" content="/favicon.ico" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

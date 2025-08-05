@@ -12,9 +12,6 @@ import {
   FooterSection
 } from "../components/landing";
 
-// Import smooth scroll CSS
-import "../styles/smooth-scroll.css";
-
 export default function LandingPage() {
   const [showLoading, setShowLoading] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
