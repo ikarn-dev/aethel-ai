@@ -5,5 +5,6 @@ export { AnalysisStatus, DEFAULT_ANALYSIS_STEPS } from './analysis-status';
 export { WalletAnalysisChat } from './wallet-analysis-chat';
 export { ProgressTracker } from './progress-tracker';
 export { StatsCards } from './stats-cards';
+export { PnLCard } from './pnl-card';
 export { useAnalysisManager } from './analysis-manager';
 export { ChatInput } from './chat-input';

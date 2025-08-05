@@ -18,6 +18,9 @@ interface ChatMessage {
 const analysisCache = new Map<string, { result: WalletAnalysisResult; timestamp: number; aiResponse?: string }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
 
+// Track ongoing analysis requests to prevent duplicates
+const ongoingAnalysis = new Map<string, Promise<void>>();
+
 interface AnalysisManagerProps {
   agent?: Agent;
   onMessagesUpdate: (messages: ChatMessage[]) => void;
@@ -49,13 +52,23 @@ export function useAnalysisManager({
   }, []);
 
   const performWalletAnalysis = async (walletAddress: string) => {
-    try {
-      onLoadingChange(true);
+    const analysisKey = `${walletAddress}_${agent?.id || 'default'}`;
+    
+    // Check if analysis is already in progress for this wallet
+    if (ongoingAnalysis.has(analysisKey)) {
+      console.log('Analysis already in progress for wallet:', walletAddress);
+      return ongoingAnalysis.get(analysisKey);
+    }
 
-      // Check cache first
-      const basicCacheKey = `${walletAddress}_${agent?.id || 'default'}`;
-      const basicCached = analysisCache.get(basicCacheKey);
-      const now = Date.now();
+    // Create the analysis promise and store it to prevent duplicates
+    const analysisPromise = (async () => {
+      try {
+        onLoadingChange(true);
+
+        // Check cache first
+        const basicCacheKey = `${walletAddress}_${agent?.id || 'default'}`;
+        const basicCached = analysisCache.get(basicCacheKey);
+        const now = Date.now();
 
       if (basicCached && (now - basicCached.timestamp) < CACHE_DURATION) {
         // Show cached basic data immediately
@@ -118,7 +131,42 @@ export function useAnalysisManager({
         try {
           agentService.setAgent(agent);
 
-          // Create minimal trading data for AI analysis
+          // Get PnL data from cached traders table data (no API requests)
+          let pnlData = null;
+          try {
+            // Search for wallet in different timeframes using cached data
+            const timeframes: ('today' | 'yesterday' | '1W')[] = ['1W', 'today', 'yesterday'];
+            
+            for (const timeframe of timeframes) {
+              const cacheKey = `traders_${timeframe}`;
+              const cachedData = localStorage.getItem(cacheKey);
+              
+              if (cachedData) {
+                try {
+                  const parsedData = JSON.parse(cachedData);
+                  const trader = parsedData.traders?.find((t: any) => t.address === walletAddress);
+                  
+                  if (trader) {
+                    pnlData = {
+                      pnl: trader.pnl,
+                      timeframe: timeframe,
+                      rank: trader.rank,
+                      totalVolume: trader.totalVolume,
+                      totalTrades: trader.totalTrades,
+                      avgTradeSize: trader.avgTradeSize
+                    };
+                    break; // Found data, stop searching
+                  }
+                } catch (parseError) {
+                  console.warn(`Failed to parse cached traders data for ${timeframe}:`, parseError);
+                }
+              }
+            }
+          } catch (error) {
+            console.warn('Failed to get PnL data from cache:', error);
+          }
+
+          // Create comprehensive trading data for AI analysis including PnL
           const tradingAnalysisData = {
             walletAddress: walletAddress,
             tradingMetrics: {
@@ -136,14 +184,30 @@ export function useAnalysisManager({
               solBalance: analysis.walletData.nativeBalance,
               uniqueTokens: analysis.walletData.tokenBalances.length,
               hasActivePositions: analysis.walletData.tokenBalances.length > 0
-            }
+            },
+            pnlData: pnlData
           };
 
-          // Create deterministic prompt to ensure consistent results
+          // Create optimized prompt with compact data structure
+          const compactData = {
+            addr: walletAddress,
+            txns: analysis.walletData.totalTransactions,
+            days: tradingAnalysisData.tradingMetrics.activityPeriodDays,
+            sol: analysis.walletData.nativeBalance,
+            tokens: analysis.walletData.tokenBalances.length,
+            ...(pnlData && {
+              pnl: pnlData.pnl,
+              rank: pnlData.rank,
+              vol: pnlData.totalVolume,
+              trades: pnlData.totalTrades,
+              tf: pnlData.timeframe
+            })
+          };
+
           const aiPrompt = `WALLET ANALYSIS REQUEST - RESPOND EXACTLY AS SPECIFIED
 
-Wallet: ${tradingAnalysisData.walletAddress}
-Data: ${tradingAnalysisData.tradingMetrics.totalTransactions} transactions (${tradingAnalysisData.tradingMetrics.avgTransactionsPerDay}/day over ${tradingAnalysisData.tradingMetrics.activityPeriodDays} days), ${tradingAnalysisData.currentHoldings.solBalance} SOL, ${tradingAnalysisData.currentHoldings.uniqueTokens} tokens
+Wallet: ${walletAddress}
+Data: ${analysis.walletData.totalTransactions} transactions (${tradingAnalysisData.tradingMetrics.avgTransactionsPerDay}/day over ${tradingAnalysisData.tradingMetrics.activityPeriodDays} days), ${analysis.walletData.nativeBalance} SOL, ${analysis.walletData.tokenBalances.length} tokens${pnlData ? `, P&L: ${pnlData.pnl >= 0 ? '+' : ''}$${Math.abs(pnlData.pnl) >= 1000000 ? (Math.abs(pnlData.pnl) / 1000000).toFixed(2) + 'M' : Math.abs(pnlData.pnl) >= 1000 ? (Math.abs(pnlData.pnl) / 1000).toFixed(2) + 'K' : Math.abs(pnlData.pnl).toFixed(2)} (${pnlData.timeframe}), Rank #${pnlData.rank}` : ''}
 
 RESPOND WITH EXACTLY THIS FORMAT (no additional steps or planning):
 
@@ -205,7 +269,15 @@ RULES: Use ONLY the data provided. Be consistent. No additional analysis or step
       }
     } finally {
       onLoadingChange(false);
+      // Remove from ongoing analysis map when complete
+      ongoingAnalysis.delete(analysisKey);
     }
+    })();
+
+    // Store the promise to prevent duplicate requests
+    ongoingAnalysis.set(analysisKey, analysisPromise);
+    
+    return analysisPromise;
   };
 
   return {

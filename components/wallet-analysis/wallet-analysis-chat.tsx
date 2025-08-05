@@ -8,6 +8,7 @@ import { ProgressTracker } from './progress-tracker';
 import { StatsCards } from './stats-cards';
 import { useAnalysisManager } from './analysis-manager';
 import { ChatInput } from './chat-input';
+import { ChatPersistenceManager } from '@/lib/chat-persistence';
 
 interface ChatMessage {
   id: string;
@@ -15,6 +16,7 @@ interface ChatMessage {
   sender: 'user' | 'agent';
   timestamp: Date;
   analysis?: WalletAnalysisResult;
+  agentId?: string;
 }
 
 interface WalletAnalysisChatProps {
@@ -48,33 +50,145 @@ export function WalletAnalysisChat({
     onError
   });
 
+  // Helper functions for chat persistence
+  const getAgentId = () => agent?.id || 'wallet-analysis-default';
+
+  const loadChatHistory = useCallback(() => {
+    if (!ChatPersistenceManager.isStorageAvailable()) {
+      return [];
+    }
+
+    const agentId = getAgentId();
+    
+    try {
+      // Load from custom storage key for wallet analysis
+      const walletAnalysisKey = `wallet_analysis_chat_${agentId}`;
+      const stored = localStorage.getItem(walletAnalysisKey);
+      
+      if (!stored) {
+        return [];
+      }
+      
+      const persistedMessages = JSON.parse(stored);
+      
+      // Convert persisted messages to local ChatMessage format
+      return persistedMessages.map((msg: any) => ({
+        id: msg.id,
+        content: msg.content,
+        sender: msg.sender as 'user' | 'agent',
+        timestamp: new Date(msg.timestamp),
+        agentId: msg.agentId,
+        analysis: msg.analysis // Analysis data is already in the correct format
+      }));
+    } catch (error) {
+      console.warn('Failed to load wallet analysis chat history:', error);
+      return [];
+    }
+  }, [agent?.id]);
+
+  const saveChatHistory = useCallback((messages: ChatMessage[]) => {
+    if (!ChatPersistenceManager.isStorageAvailable()) return;
+    
+    const agentId = getAgentId();
+    
+    try {
+      // Create a custom storage key for wallet analysis with analysis data
+      const walletAnalysisKey = `wallet_analysis_chat_${agentId}`;
+      
+      // Limit messages to prevent localStorage bloat
+      const limitedMessages = messages.slice(-100);
+      
+      // Store messages with analysis data
+      const messagesWithAnalysis = limitedMessages.map(msg => ({
+        id: msg.id,
+        content: msg.content,
+        sender: msg.sender,
+        timestamp: msg.timestamp.toISOString(),
+        agentId: agentId,
+        analysis: msg.analysis // Keep the full analysis object
+      }));
+      
+      localStorage.setItem(walletAnalysisKey, JSON.stringify(messagesWithAnalysis));
+    } catch (error) {
+      console.warn('Failed to save wallet analysis chat history:', error);
+    }
+  }, [agent?.id]);
+
   // Combine and sort messages by timestamp to maintain chronological order
-  const messages = [...localMessages, ...analysisMessages].sort((a, b) =>
-    new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-  );
+  // Filter out duplicate analysis messages to prevent duplicate stats cards
+  const messages = [...localMessages, ...analysisMessages]
+    .filter((message, index, array) => {
+      // Remove duplicate messages with analysis data
+      if (message.analysis) {
+        const firstAnalysisIndex = array.findIndex(m => m.analysis && m.analysis.walletData.address === message.analysis?.walletData.address);
+        return index === firstAnalysisIndex;
+      }
+      return true;
+    })
+    .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+
+  // Save all combined messages whenever analysisMessages change (these contain the analysis results)
+  useEffect(() => {
+    if (analysisMessages.length > 0) {
+      // When we get new analysis messages, save the combined messages
+      const allMessages = [...localMessages, ...analysisMessages].sort((a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      );
+      saveChatHistory(allMessages);
+    }
+  }, [analysisMessages, localMessages, saveChatHistory]);
+
+  // Track the current wallet being analyzed to detect changes
+  const [currentWallet, setCurrentWallet] = useState<string | null>(null);
 
   // Initialize with welcome message and handle initial wallet
   useEffect(() => {
-    const welcomeMessage: ChatMessage = {
-      id: 'welcome',
-      content: `Hello! I'm your wallet analysis assistant`,
-      sender: 'agent',
-      timestamp: new Date(),
-    };
-    setLocalMessages([welcomeMessage]);
-
-    // If initialWallet is provided, automatically start analysis
-    if (initialWallet && !hasTriggeredAnalysis.current) {
+    // If wallet address changed, reset analysis state and clear messages
+    if (initialWallet && initialWallet !== currentWallet) {
+      setCurrentWallet(initialWallet);
+      hasTriggeredAnalysis.current = false; // Reset analysis flag for new wallet
+      setLocalMessages([]); // Start with empty messages to prevent jitter
+      
+      // Trigger automatic analysis for the new wallet immediately without welcome message
       hasTriggeredAnalysis.current = true;
-      setTimeout(() => {
-        handleWalletAnalysisAutomatic(initialWallet);
-      }, 500);
+      handleWalletAnalysisAutomatic(initialWallet);
+      
+      return; // Exit early for new wallet - prevent duplicate execution
     }
-  }, [initialWallet]);
 
-  // Auto-scroll to bottom when messages change
+    // Only load persisted chat history if no initialWallet is provided (not coming from traders table)
+    if (!initialWallet) {
+      const persistedMessages = loadChatHistory();
+      
+      if (persistedMessages.length > 0) {
+        // If we have persisted messages, use them as local messages and don't trigger automatic analysis
+        setLocalMessages(persistedMessages);
+        hasTriggeredAnalysis.current = true; // Mark as triggered to prevent auto-analysis
+      } else if (!hasTriggeredAnalysis.current) {
+        // If no persisted messages, create welcome message
+        const welcomeMessage: ChatMessage = {
+          id: 'welcome',
+          content: `Hello! I'm your wallet analysis assistant`,
+          sender: 'agent',
+          timestamp: new Date(),
+          agentId: getAgentId(),
+        };
+        setLocalMessages([welcomeMessage]);
+      }
+    }
+  }, [initialWallet, loadChatHistory, currentWallet]);
+
+  // Auto-scroll to bottom when messages change - but only if user is near bottom
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const messagesContainer = messagesEndRef.current?.parentElement;
+    if (messagesContainer) {
+      const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      
+      if (isNearBottom) {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
+    }
   }, [messages]);
 
   const handleWalletAnalysisAutomatic = async (walletAddress: string) => {
@@ -150,7 +264,12 @@ export function WalletAnalysisChat({
       timestamp: new Date(),
     };
 
-    setLocalMessages(prev => [...prev, userMessage]);
+    setLocalMessages(prev => {
+      const newMessages = [...prev, userMessage];
+      // Save to persistence
+      saveChatHistory(newMessages);
+      return newMessages;
+    });
     setIsLoading(true);
 
     try {
@@ -179,8 +298,14 @@ export function WalletAnalysisChat({
           content: errorMessage,
           sender: 'agent',
           timestamp: new Date(),
+          agentId: getAgentId(),
         };
-        setLocalMessages(prev => [...prev, feedbackMessage]);
+        setLocalMessages(prev => {
+          const newMessages = [...prev, feedbackMessage];
+          // Save to persistence
+          saveChatHistory(newMessages);
+          return newMessages;
+        });
         return;
       } else {
         // No address detected - restrict to Solana addresses only
@@ -189,8 +314,14 @@ export function WalletAnalysisChat({
           content: `🔒 **Solana addresses only**\n\nI can only analyze Solana wallet addresses at this time.\n\n**Please provide a Solana wallet address to get started.**\n\nExample format: \`9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM\`\n\n• 43-44 characters long\n• Base58 encoded (no 0x prefix)\n• Contains letters and numbers only`,
           sender: 'agent',
           timestamp: new Date(),
+          agentId: getAgentId(),
         };
-        setLocalMessages(prev => [...prev, restrictionMessage]);
+        setLocalMessages(prev => {
+          const newMessages = [...prev, restrictionMessage];
+          // Save to persistence
+          saveChatHistory(newMessages);
+          return newMessages;
+        });
         return;
       }
     } catch (error) {
@@ -200,8 +331,14 @@ export function WalletAnalysisChat({
         content: `Sorry, I encountered an error while analyzing the wallet. Please check the address and try again.`,
         sender: 'agent',
         timestamp: new Date(),
+        agentId: getAgentId(),
       };
-      setLocalMessages(prev => [...prev, errorMessage]);
+      setLocalMessages(prev => {
+        const newMessages = [...prev, errorMessage];
+        // Save to persistence
+        saveChatHistory(newMessages);
+        return newMessages;
+      });
 
       if (onError) {
         onError(error instanceof Error ? error.message : 'Unknown error');
@@ -210,6 +347,33 @@ export function WalletAnalysisChat({
       setIsLoading(false);
     }
   };
+
+  // Clear chat function
+  const handleClearChat = useCallback(() => {
+    // Clear local messages
+    setLocalMessages([]);
+    
+    // Clear analysis messages by resetting the analysis manager
+    // This is handled by clearing the cache and localStorage
+    
+    // Clear chat history from localStorage
+    const agentId = getAgentId();
+    const walletAnalysisKey = `wallet_analysis_chat_${agentId}`;
+    localStorage.removeItem(walletAnalysisKey);
+    
+    // Reset analysis trigger flag
+    hasTriggeredAnalysis.current = false;
+    
+    // Add welcome message back
+    const welcomeMessage: ChatMessage = {
+      id: 'welcome-new',
+      content: `Hello! I'm your wallet analysis assistant`,
+      sender: 'agent',
+      timestamp: new Date(),
+      agentId: agentId,
+    };
+    setLocalMessages([welcomeMessage]);
+  }, []);
 
   return (
     <div className="flex-1 flex flex-col bg-slate-900 h-full">

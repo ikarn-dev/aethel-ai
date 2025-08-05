@@ -1,6 +1,75 @@
 import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
 import { Agent, AgentState, AgentStatus } from './types';
 import { AgentService } from './agent-service';
+import { useWallet } from '../hooks/use-wallet';
+
+// Client-side wallet-agent association management
+const WALLET_AGENTS_KEY = 'wallet_agents_mapping';
+
+interface WalletAgentsMapping {
+  [walletAddress: string]: string[]; // wallet address -> agent IDs
+}
+
+// Helper functions for managing wallet-agent associations
+const getWalletAgentsMapping = (): WalletAgentsMapping => {
+  if (typeof window === 'undefined') return {};
+  try {
+    const stored = localStorage.getItem(WALLET_AGENTS_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch {
+    return {};
+  }
+};
+
+const saveWalletAgentsMapping = (mapping: WalletAgentsMapping): void => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(WALLET_AGENTS_KEY, JSON.stringify(mapping));
+  } catch (error) {
+    console.error('Failed to save wallet agents mapping:', error);
+  }
+};
+
+const getAgentsForWallet = (walletAddress: string): string[] => {
+  const mapping = getWalletAgentsMapping();
+  return mapping[walletAddress] || [];
+};
+
+const addAgentToWallet = (walletAddress: string, agentId: string): void => {
+  const mapping = getWalletAgentsMapping();
+  if (!mapping[walletAddress]) {
+    mapping[walletAddress] = [];
+  }
+  if (!mapping[walletAddress].includes(agentId)) {
+    mapping[walletAddress].push(agentId);
+    saveWalletAgentsMapping(mapping);
+  }
+};
+
+const removeAgentFromWallet = (walletAddress: string, agentId: string): void => {
+  const mapping = getWalletAgentsMapping();
+  if (mapping[walletAddress]) {
+    mapping[walletAddress] = mapping[walletAddress].filter(id => id !== agentId);
+    saveWalletAgentsMapping(mapping);
+  }
+};
+
+const removeAgentFromAllWallets = (agentId: string): void => {
+  const mapping = getWalletAgentsMapping();
+  let changed = false;
+  
+  Object.keys(mapping).forEach(walletAddress => {
+    const originalLength = mapping[walletAddress].length;
+    mapping[walletAddress] = mapping[walletAddress].filter(id => id !== agentId);
+    if (mapping[walletAddress].length !== originalLength) {
+      changed = true;
+    }
+  });
+  
+  if (changed) {
+    saveWalletAgentsMapping(mapping);
+  }
+};
 
 // Simple state interface
 interface AgentStoreState {
@@ -54,6 +123,7 @@ const initialState: AgentStoreState = {
 export function AgentStoreProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AgentStoreState>(initialState);
   const agentServiceRef = useRef<AgentService>(new AgentService());
+  const { publicKey } = useWallet();
 
   // Synchronous actions
   const setLoading = useCallback((loading: boolean) => {
@@ -123,10 +193,21 @@ export function AgentStoreProvider({ children }: { children: React.ReactNode }) 
     setError(null);
 
     try {
+      // Fetch all agents from backend
       const response = await agentServiceRef.current.getAgents();
 
       if (response.success && response.data) {
-        setAgents(response.data);
+        // Filter agents by current wallet on client-side
+        const walletAddress = publicKey?.toString();
+        if (walletAddress) {
+          const walletAgents = getAgentsForWallet(walletAddress);
+          const filteredAgents = response.data.filter(agent => 
+            walletAgents.includes(agent.id)
+          );
+          setAgents(filteredAgents);
+        } else {
+          setAgents([]);
+        }
       } else {
         setError(response.error || 'Failed to fetch agents');
       }
@@ -135,7 +216,7 @@ export function AgentStoreProvider({ children }: { children: React.ReactNode }) 
     } finally {
       setLoading(false);
     }
-  }, [setLoading, setError, setAgents]);
+  }, [setLoading, setError, setAgents, publicKey]);
 
   const fetchAgent = useCallback(async (id: string): Promise<Agent | null> => {
     setError(null);
@@ -160,9 +241,18 @@ export function AgentStoreProvider({ children }: { children: React.ReactNode }) 
     setError(null);
 
     try {
+      const walletAddress = publicKey?.toString();
+      if (!walletAddress) {
+        setError('Wallet not connected');
+        return null;
+      }
+
+      // Create agent without wallet_address since backend doesn't support it
       const response = await agentServiceRef.current.createAgent(config);
 
       if (response.success && response.data) {
+        // Associate the agent with the current wallet in localStorage
+        addAgentToWallet(walletAddress, response.data.id);
         addAgent(response.data);
         return response.data;
       } else {
@@ -175,16 +265,32 @@ export function AgentStoreProvider({ children }: { children: React.ReactNode }) 
     } finally {
       setLoading(false);
     }
-  }, [setLoading, setError, addAgent]);
+  }, [setLoading, setError, addAgent, publicKey]);
 
   const deleteAgent = useCallback(async (id: string): Promise<boolean> => {
     setLoading(true);
     setError(null);
 
     try {
+      const walletAddress = publicKey?.toString();
+      if (!walletAddress) {
+        setError('Wallet not connected');
+        return false;
+      }
+
+      // Check if the agent belongs to the current wallet
+      const walletAgents = getAgentsForWallet(walletAddress);
+      if (!walletAgents.includes(id)) {
+        setError('Access denied: You can only delete agents you own');
+        return false;
+      }
+
+      // Delete from backend (without wallet parameter since backend doesn't support it)
       const response = await agentServiceRef.current.deleteAgent(id);
 
       if (response.success) {
+        // Remove from wallet association
+        removeAgentFromWallet(walletAddress, id);
         removeAgent(id);
         return true;
       } else {
@@ -197,12 +303,26 @@ export function AgentStoreProvider({ children }: { children: React.ReactNode }) 
     } finally {
       setLoading(false);
     }
-  }, [setLoading, setError, removeAgent]);
+  }, [setLoading, setError, removeAgent, publicKey]);
 
   const updateAgentState = useCallback(async (id: string, state: AgentState): Promise<boolean> => {
     setError(null);
 
     try {
+      const walletAddress = publicKey?.toString();
+      if (!walletAddress) {
+        setError('Wallet not connected');
+        return false;
+      }
+
+      // Check if the agent belongs to the current wallet
+      const walletAgents = getAgentsForWallet(walletAddress);
+      if (!walletAgents.includes(id)) {
+        setError('Access denied: You can only modify agents you own');
+        return false;
+      }
+
+      // Update agent state (without wallet parameter since backend doesn't support it)
       const response = await agentServiceRef.current.updateAgentState(id, state);
 
       if (response.success && response.data) {
@@ -216,7 +336,7 @@ export function AgentStoreProvider({ children }: { children: React.ReactNode }) 
       setError(error instanceof Error ? error.message : 'Unknown error');
       return false;
     }
-  }, [setError, updateAgent]);
+  }, [setError, updateAgent, publicKey]);
 
   const getAgentStatus = useCallback(async (id: string): Promise<AgentStatus | null> => {
     setError(null);
@@ -290,6 +410,20 @@ export function AgentStoreProvider({ children }: { children: React.ReactNode }) 
     getAgentStatus,
     batchUpdateStates,
   };
+
+  // Handle wallet changes
+  useEffect(() => {
+    if (!publicKey) {
+      // Wallet disconnected - clear all agents
+      setAgents([]);
+      setCurrentAgent(null);
+      clearSelection();
+      setError(null);
+    } else {
+      // Wallet connected or changed - fetch agents for this wallet
+      fetchAgents();
+    }
+  }, [publicKey, fetchAgents]);
 
   const contextValue: AgentStoreContextType = {
     state,

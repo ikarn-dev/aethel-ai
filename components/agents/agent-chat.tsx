@@ -7,6 +7,7 @@ import LoadingIcon from "../ui/common/loading-icon";
 import { ParallelChatHandler } from "../../lib/parallel-chat-handler";
 import { StatusUpdate } from "../../lib/status-manager";
 import { processMessageWithWalletAnalysis } from "../../lib/wallet-analysis/chat-integration";
+import { ChatPersistenceManager } from "../../lib/chat-persistence";
 
 // Rotating text component for AI thinking messages
 function RotatingText() {
@@ -81,15 +82,26 @@ export default function AgentChat({ agent, onClose }: AgentChatProps) {
   const loadChatHistory = async () => {
     if (!agent) return;
 
-    const welcomeMessage: ChatMessage = {
-      id: `welcome-${agent.id}`,
-      content: `Hello! I'm ${agent.name}. ${agent.description}. How can I help you today?`,
-      sender: "agent",
-      timestamp: new Date(),
-      agentId: agent.id,
-    };
+    // Load persisted chat history
+    const persistedMessages = ChatPersistenceManager.loadChatHistory(agent.id);
+    
+    if (persistedMessages.length > 0) {
+      // If we have persisted messages, use them
+      setMessages(persistedMessages);
+    } else {
+      // If no persisted messages, create welcome message
+      const welcomeMessage: ChatMessage = {
+        id: `welcome-${agent.id}`,
+        content: `Hello! I'm ${agent.name}. ${agent.description}. How can I help you today?`,
+        sender: "agent",
+        timestamp: new Date(),
+        agentId: agent.id,
+      };
 
-    setMessages([welcomeMessage]);
+      setMessages([welcomeMessage]);
+      // Save the welcome message to persistence
+      ChatPersistenceManager.addMessage(agent.id, welcomeMessage);
+    }
   };
 
   const updateAgentStatus = async () => {
@@ -134,7 +146,12 @@ export default function AgentChat({ agent, onClose }: AgentChatProps) {
       agentId: agent.id,
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages(prev => {
+      const newMessages = [...prev, userMessage];
+      // Save to persistence
+      ChatPersistenceManager.saveChatHistory(agent.id, newMessages);
+      return newMessages;
+    });
     setInputValue("");
     setIsLoading(true);
 
@@ -168,7 +185,12 @@ export default function AgentChat({ agent, onClose }: AgentChatProps) {
             agentId: agent.id,
           };
 
-          setMessages(prev => [...prev, agentMessage]);
+          setMessages(prev => {
+            const newMessages = [...prev, agentMessage];
+            // Save to persistence
+            ChatPersistenceManager.saveChatHistory(agent.id, newMessages);
+            return newMessages;
+          });
           setIsLoading(false);
           return;
         }
@@ -209,6 +231,8 @@ export default function AgentChat({ agent, onClose }: AgentChatProps) {
 
         setMessages(prev => {
           const newMessages = [...prev, agentMessage];
+          // Save to persistence
+          ChatPersistenceManager.saveChatHistory(agent.id, newMessages);
           return newMessages;
         });
 
@@ -232,7 +256,12 @@ export default function AgentChat({ agent, onClose }: AgentChatProps) {
         agentId: agent.id,
       };
 
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => {
+        const newMessages = [...prev, errorMessage];
+        // Save to persistence
+        ChatPersistenceManager.saveChatHistory(agent.id, newMessages);
+        return newMessages;
+      });
     } finally {
       setIsLoading(false);
     }
@@ -261,6 +290,26 @@ export default function AgentChat({ agent, onClose }: AgentChatProps) {
 
   const isAgentReady = () => {
     return agentStatus?.state === 'RUNNING' && agentStatus?.isHealthy;
+  };
+
+  const handleClearChat = () => {
+    if (!agent) return;
+    
+    // Clear from persistence
+    ChatPersistenceManager.clearChatHistory(agent.id);
+    
+    // Create new welcome message
+    const welcomeMessage: ChatMessage = {
+      id: `welcome-${agent.id}-${Date.now()}`,
+      content: `Hello! I'm ${agent.name}. ${agent.description}. How can I help you today?`,
+      sender: "agent",
+      timestamp: new Date(),
+      agentId: agent.id,
+    };
+
+    // Update state and save new welcome message
+    setMessages([welcomeMessage]);
+    ChatPersistenceManager.addMessage(agent.id, welcomeMessage);
   };
 
   if (!agent) {
@@ -300,6 +349,17 @@ export default function AgentChat({ agent, onClose }: AgentChatProps) {
                 Ready to chat
               </div>
             )}
+
+            {/* Clear Chat Button */}
+            <button
+              onClick={handleClearChat}
+              className="p-2 text-gray-400 hover:text-red-400 transition-colors rounded-lg hover:bg-red-900/20"
+              title="Clear chat history"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
 
             {onClose && (
               <button

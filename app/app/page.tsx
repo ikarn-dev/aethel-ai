@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { AgentService } from "@/lib/agent-service";
 import { Message } from "@/lib/types";
+import { ChatPersistenceManager } from "@/lib/chat-persistence";
 
 import PageRetryHandler from "@/components/error-handling/page-retry-handler";
 import LoadingIcon from "@/components/ui/common/loading-icon";
@@ -65,6 +66,44 @@ export default function MainChatPage() {
     { icon: "📚", text: "Teach me about", category: "Education" },
     { icon: "💼", text: "Help me with my work on", category: "Professional" }
   ];
+
+  // Helper function to convert ChatMessage to Message format
+  const convertChatMessageToMessage = (chatMessage: any): Message => ({
+    id: chatMessage.id,
+    content: chatMessage.content,
+    sender: chatMessage.sender === "agent" ? "ai" : chatMessage.sender,
+    timestamp: new Date(chatMessage.timestamp)
+  });
+
+  // Helper function to convert Message to ChatMessage format
+  const convertMessageToChatMessage = (message: Message, agentId: string): any => ({
+    id: message.id,
+    content: message.content,
+    sender: message.sender === "ai" ? "agent" : message.sender,
+    timestamp: message.timestamp,
+    agentId: agentId
+  });
+
+  // Load persisted chat history for current agent
+  const loadChatHistory = (agentId: string) => {
+    if (!ChatPersistenceManager.isStorageAvailable()) {
+      return [];
+    }
+
+    const persistedMessages = ChatPersistenceManager.loadChatHistory(agentId);
+    
+    // Convert ChatMessage format to Message format
+    return persistedMessages.map(convertChatMessageToMessage);
+  };
+
+  // Save chat history for current agent
+  const saveChatHistory = (agentId: string, messages: Message[]) => {
+    if (!ChatPersistenceManager.isStorageAvailable()) return;
+    
+    // Convert Message format to ChatMessage format
+    const chatMessages = messages.map(msg => convertMessageToChatMessage(msg, agentId));
+    ChatPersistenceManager.saveChatHistory(agentId, chatMessages);
+  };
 
   // Initialize and check for selected agent from localStorage
   useEffect(() => {
@@ -280,21 +319,34 @@ export default function MainChatPage() {
         name: targetAgent.name
       }));
 
-      // Show different messages based on agent state
-      if (targetAgent.state === 'RUNNING') {
-        setMessages([{
-          id: "ready",
-          content: `Hello! I'm ${targetAgent.name}. What would you like to know?`,
-          sender: "ai",
-          timestamp: new Date(),
-        }]);
+      // Load persisted chat history or show default messages
+      const persistedMessages = loadChatHistory(targetAgent.id);
+      
+      if (persistedMessages.length > 0) {
+        // If we have persisted messages, use them
+        setMessages(persistedMessages);
       } else {
-        setMessages([{
-          id: "selected",
-          content: `Agent ${targetAgent.name} is ready. Click 'Start Agent' to begin chatting.`,
-          sender: "ai",
-          timestamp: new Date(),
-        }]);
+        // Show different messages based on agent state
+        let initialMessage;
+        if (targetAgent.state === 'RUNNING') {
+          initialMessage = {
+            id: "ready",
+            content: `Hello! I'm ${targetAgent.name}. What would you like to know?`,
+            sender: "ai" as const,
+            timestamp: new Date(),
+          };
+        } else {
+          initialMessage = {
+            id: "selected",
+            content: `Agent ${targetAgent.name} is ready. Click 'Start Agent' to begin chatting.`,
+            sender: "ai" as const,
+            timestamp: new Date(),
+          };
+        }
+        
+        setMessages([initialMessage]);
+        // Save the initial message to persistence
+        saveChatHistory(targetAgent.id, [initialMessage]);
       }
 
     } catch (error) {
@@ -365,7 +417,14 @@ export default function MainChatPage() {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages(prev => {
+      const newMessages = [...prev, userMessage];
+      // Save to persistence
+      if (agentStatus.id) {
+        saveChatHistory(agentStatus.id, newMessages);
+      }
+      return newMessages;
+    });
     const currentInput = inputValue;
     setInputValue("");
     setIsLoading(true);
@@ -381,7 +440,14 @@ export default function MainChatPage() {
           sender: "ai",
           timestamp: new Date(),
         };
-        setMessages(prev => [...prev, aiMessage]);
+        setMessages(prev => {
+          const newMessages = [...prev, aiMessage];
+          // Save to persistence
+          if (agentStatus.id) {
+            saveChatHistory(agentStatus.id, newMessages);
+          }
+          return newMessages;
+        });
       } else {
         const errorMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -389,7 +455,14 @@ export default function MainChatPage() {
           sender: "ai",
           timestamp: new Date(),
         };
-        setMessages(prev => [...prev, errorMessage]);
+        setMessages(prev => {
+          const newMessages = [...prev, errorMessage];
+          // Save to persistence
+          if (agentStatus.id) {
+            saveChatHistory(agentStatus.id, newMessages);
+          }
+          return newMessages;
+        });
       }
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -399,7 +472,14 @@ export default function MainChatPage() {
         sender: "ai",
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => {
+        const newMessages = [...prev, errorMessage];
+        // Save to persistence
+        if (agentStatus.id) {
+          saveChatHistory(agentStatus.id, newMessages);
+        }
+        return newMessages;
+      });
     } finally {
       setIsLoading(false);
     }
@@ -511,6 +591,31 @@ export default function MainChatPage() {
                   style={{ fontFamily: 'SF Pro Display, system-ui, sans-serif' }}
                 >
                   Retry
+                </button>
+              )}
+
+              {/* Clear Chat Button */}
+              {agentStatus.id && (
+                <button
+                  onClick={() => {
+                    if (agentStatus.id) {
+                      ChatPersistenceManager.clearChatHistory(agentStatus.id);
+                      // Reset to initial message
+                      const initialMessage = {
+                        id: "ready",
+                        content: `Hello! I'm ${agentStatus.name}. What would you like to know?`,
+                        sender: "ai" as const,
+                        timestamp: new Date(),
+                      };
+                      setMessages([initialMessage]);
+                      saveChatHistory(agentStatus.id, [initialMessage]);
+                    }
+                  }}
+                  className="px-2 py-1 bg-slate-800/50 hover:bg-red-900/20 text-gray-300 hover:text-red-400 border border-slate-600/30 hover:border-red-500/30 text-xs rounded-lg transition-all font-medium cursor-pointer"
+                  style={{ fontFamily: 'SF Pro Display, system-ui, sans-serif' }}
+                  title="Clear chat history"
+                >
+                  Clear
                 </button>
               )}
 

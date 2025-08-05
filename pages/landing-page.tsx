@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Loading from "../components/ui/common/loading";
 import Navbar from "../components/navigation/navbar";
@@ -8,6 +8,26 @@ import Navbar from "../components/navigation/navbar";
 export default function LandingPage() {
   const [showLoading, setShowLoading] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Import fonts
+  useEffect(() => {
+    // Import Prosto One font for general use
+    const prostoLink = document.createElement('link');
+    prostoLink.href = 'https://fonts.googleapis.com/css2?family=Prosto+One&display=swap';
+    prostoLink.rel = 'stylesheet';
+    document.head.appendChild(prostoLink);
+    
+    // Import Nova Flat font for FAQ section
+    const novaLink = document.createElement('link');
+    novaLink.href = 'https://fonts.googleapis.com/css2?family=Nova+Flat&display=swap';
+    novaLink.rel = 'stylesheet';
+    document.head.appendChild(novaLink);
+    
+    return () => {
+      document.head.removeChild(prostoLink);
+      document.head.removeChild(novaLink);
+    };
+  }, []);
 
   const handleLoadingComplete = () => {
     setIsTransitioning(true);
@@ -23,7 +43,7 @@ export default function LandingPage() {
       <div className="fixed inset-0 bg-slate-900 -z-10" />
 
       {/* Landing page content - always rendered behind loading screen */}
-      <div className="relative min-h-screen bg-slate-900">
+      <div className="relative min-h-screen bg-slate-900" style={{ fontFamily: '"Prosto One", sans-serif' }}>
         {/* Navbar Component */}
         <Navbar />
 
@@ -168,7 +188,7 @@ export default function LandingPage() {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-20 px-6">
+        <section className="py-20 px-6" style={{ fontFamily: '"Nova Flat", system-ui', fontWeight: 400, fontStyle: 'normal' }}>
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -204,7 +224,7 @@ export default function LandingPage() {
         </section>
 
         {/* Footer */}
-        <footer className="bg-slate-900/50 border-t border-teal-500/20 py-12 px-6">
+        <footer className="bg-slate-900/50 border-t border-teal-500/20 py-12 px-6" style={{ fontFamily: '"Nova Flat", system-ui', fontWeight: 400, fontStyle: 'normal' }}>
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
               <div className="col-span-1 md:col-span-2">

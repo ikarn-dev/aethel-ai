@@ -350,6 +350,36 @@ export default function AnalysisPage() {
             <div className="text-xs text-green-400 bg-green-900/30 px-3 py-1 rounded-full border border-green-500/30">
               Ready to analyze
             </div>
+
+            {/* Clear Chat Button */}
+            <button
+              onClick={() => {
+                if (agent) {
+                  try {
+                    // Clear wallet analysis chat history using the same custom key
+                    const agentId = agent.id || 'wallet-analysis-default';
+                    const walletAnalysisKey = `wallet_analysis_chat_${agentId}`;
+                    localStorage.removeItem(walletAnalysisKey);
+                    
+                    // Remove wallet parameter from URL to prevent auto-analysis on refresh
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('wallet');
+                    window.history.replaceState({}, '', url.toString());
+                    
+                    // Refresh the page to reload with fresh chat
+                    window.location.reload();
+                  } catch (error) {
+                    console.warn('Failed to clear wallet analysis chat history:', error);
+                  }
+                }
+              }}
+              className="p-2 text-gray-400 hover:text-red-400 transition-colors rounded-lg hover:bg-red-900/20"
+              title="Clear chat history"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>

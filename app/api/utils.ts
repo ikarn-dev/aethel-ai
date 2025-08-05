@@ -248,6 +248,7 @@ export function validateCreateAgentRequest(body: any): string | null {
   if (!body.blueprint.trigger || typeof body.blueprint.trigger !== 'object') {
     return 'Blueprint trigger is required and must be an object';
   }
+  
   return null;
 }
 
@@ -257,6 +258,8 @@ export function validateWebhookRequest(body: any): string | null {
   }
   return null;
 }
+
+
 
 // Input sanitization utilities
 export function sanitizeString(input: string, maxLength: number = 1000): string {

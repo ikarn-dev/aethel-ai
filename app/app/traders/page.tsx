@@ -65,8 +65,40 @@ export default function TradersPage() {
 
       if (reset || page === 1) {
         setTraders(response.traders);
+        
+        // Cache the first page of traders data for wallet analysis
+        try {
+          const cacheKey = `traders_${timeframe}`;
+          const cacheData = {
+            traders: response.traders,
+            timeframe: timeframe,
+            lastUpdated: Date.now(),
+            hasMore: response.hasMore
+          };
+          localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+        } catch (cacheError) {
+          console.warn('Failed to cache traders data:', cacheError);
+        }
       } else {
-        setTraders(prev => [...prev, ...response.traders]);
+        setTraders(prev => {
+          const updatedTraders = [...prev, ...response.traders];
+          
+          // Update cache with all loaded traders
+          try {
+            const cacheKey = `traders_${timeframe}`;
+            const cacheData = {
+              traders: updatedTraders,
+              timeframe: timeframe,
+              lastUpdated: Date.now(),
+              hasMore: response.hasMore
+            };
+            localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+          } catch (cacheError) {
+            console.warn('Failed to update cached traders data:', cacheError);
+          }
+          
+          return updatedTraders;
+        });
       }
 
       setHasMore(response.hasMore);

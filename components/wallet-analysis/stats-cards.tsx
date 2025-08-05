@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { WalletAnalysisResult } from '@/lib/wallet-analysis/types';
+import { PnLCard } from './pnl-card';
 
 interface StatsCardsProps {
   analysis: WalletAnalysisResult;
@@ -37,6 +38,7 @@ function StatsCard({ title, value, subtitle, icon, color = "teal" }: {
 
 export function StatsCards({ analysis }: StatsCardsProps) {
   const [showCopied, setShowCopied] = React.useState(false);
+  const [pnlData, setPnlData] = useState<any>(null);
 
   // Format wallet address for display (show first 6 and last 4 characters)
   const formatWalletAddress = (address: string) => {
@@ -91,8 +93,8 @@ export function StatsCards({ analysis }: StatsCardsProps) {
         </div>
       </div>
 
-      {/* Portfolio Overview Stats - Only 3 Essential Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      {/* Portfolio Overview Stats - Now 4 Cards including PnL */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatsCard
           title="SOL Balance"
           value={`${(analysis.walletData.nativeBalance || 0).toFixed(9)} SOL`}
@@ -125,6 +127,12 @@ export function StatsCards({ analysis }: StatsCardsProps) {
             </svg>
           }
           color="teal"
+        />
+        
+        {/* PnL Card */}
+        <PnLCard 
+          walletAddress={analysis.walletData.address}
+          onPnLDataUpdate={(data) => setPnlData(data)}
         />
       </div>
     </div>

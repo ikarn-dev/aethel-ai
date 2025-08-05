@@ -19,6 +19,28 @@ export default function Loading({ onComplete, isTransitioning = false }: Loading
   const text = "Aethel|AI";
   const totalLetters = text.length;
 
+  // Add Google Fonts imports
+  useEffect(() => {
+    // Import Bitcount Prop Single for "AI"
+    const bitcountLink = document.createElement('link');
+    bitcountLink.href = 'https://fonts.googleapis.com/css2?family=Bitcount+Prop+Single:wght@100..900&display=swap';
+    bitcountLink.rel = 'stylesheet';
+    document.head.appendChild(bitcountLink);
+    
+    // Import Climate Crisis for "Aethel"
+    const climateLink = document.createElement('link');
+    climateLink.href = 'https://fonts.googleapis.com/css2?family=Climate+Crisis&display=swap';
+    climateLink.rel = 'stylesheet';
+    document.head.appendChild(climateLink);
+    
+    return () => {
+      document.head.removeChild(bitcountLink);
+      document.head.removeChild(climateLink);
+    };
+  }, []);
+
+
+
   useEffect(() => {
     // Letter-by-letter animation
     const letterInterval = setInterval(() => {
@@ -105,6 +127,7 @@ export default function Loading({ onComplete, isTransitioning = false }: Loading
                     const isVisible = index < visibleLetters;
                     const isSeparator = letter === '|';
                     const isAI = index > 6; // "AI" comes after separator
+                    const isAethel = index < 6; // "Aethel" comes before separator
 
                     return (
                       <span
@@ -117,7 +140,20 @@ export default function Loading({ onComplete, isTransitioning = false }: Loading
                               : 'text-white'
                           }`}
                         style={{
-                          fontFamily: isSeparator ? 'monospace' : 'Comic Sans MS, cursive, system-ui',
+                          fontFamily: isSeparator 
+                            ? 'monospace' 
+                            : isAethel 
+                              ? '"Climate Crisis", sans-serif'
+                              : '"Bitcount Prop Single", system-ui',
+                          fontOpticalSizing: 'auto',
+                          fontWeight: isAethel ? '400' : isAI ? '400' : '400',
+                          fontStyle: 'normal',
+                          fontVariationSettings: isAethel 
+                            ? '"YEAR" 1979' 
+                            : isAI 
+                              ? '"slnt" 0, "CRSV" 0.5, "ELSH" 0, "ELXP" 0'
+                              : 'normal',
+                          letterSpacing: isAethel ? '0.02em' : '-0.01em',
                           transitionDelay: `${index * 100}ms`
                         }}
                       >
