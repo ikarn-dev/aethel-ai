@@ -97,20 +97,15 @@ Frontend → Proxy API → JuliaOS Backend → Julia Core Engine
 - **JuliaOS Backend** running and accessible
 
 
-### Demo and Backend Working
-- **Backend Of JuliaOS hosted on Cloud Infra for using the Rest APIs**
-<img width="1130" height="809" alt="Screenshot 2025-08-05 214508" src="https://github.com/user-attachments/assets/f986be5e-ee56-4d84-8461-87144cc5fac7" />
+**Sample input sent to Gemini AI 1.5 Pro using JuliaOS `llm_chat` Tool**
 
-**Testing the APIs**
-<img width="1363" height="835" alt="Screenshot 2025-08-05 214922" src="https://github.com/user-attachments/assets/0fa0b2f6-d1b8-4639-893c-1bc1d9d6c6d2" />
-
-**Sample input sent to Gemini ai 1.5 pro using JuliaOS llm_chat Tool**
+```json
 {
   "prompt_structure": "WALLET ANALYSIS REQUEST - RESPOND EXACTLY AS SPECIFIED",
   "data_format": {
     "addr": "wallet_address",
     "txns": "total_transactions",
-    "days": "activity_period_days", 
+    "days": "activity_period_days",
     "sol": "native_balance",
     "tokens": "unique_token_count",
     "pnl": "profit_loss_amount",
@@ -122,14 +117,14 @@ Frontend → Proxy API → JuliaOS Backend → Julia Core Engine
   "response_format": {
     "sections": [
       "🎯 Trading Profile",
-      "📊 Copy Analysis", 
+      "📊 Copy Analysis",
       "⚡ Key Behaviors"
     ],
     "constraints": "Use ONLY provided data. Be consistent. No additional analysis."
   }
 }
 
-**Sample output recieved from gemini ai and displayed to users**
+Sample output received from Gemini AI and displayed to users
 
 {
   "message": {
@@ -178,7 +173,6 @@ Frontend → Proxy API → JuliaOS Backend → Julia Core Engine
     }
   }
 }
-
 **Output In Frontend**
 The analysis is done using gemini ai that is part of JuliaOs Framework the above data is auto sent and recived upon users given inputs in the frontend 
 the wallet data is fetched using various apis mentioned in docs.
