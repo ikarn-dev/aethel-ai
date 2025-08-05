@@ -173,6 +173,8 @@ Sample output received from Gemini AI and displayed to users
     }
   }
 }
+
+```
 **Output In Frontend**
 The analysis is done using gemini ai that is part of JuliaOs Framework the above data is auto sent and recived upon users given inputs in the frontend 
 the wallet data is fetched using various apis mentioned in docs.
