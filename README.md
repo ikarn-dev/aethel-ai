@@ -1,4 +1,9 @@
-# Aethel AI - Powered by JuliaOS
+## 🔗 Project Attribution
+
+[![GitHub](https://img.shields.io/badge/GitHub-JuliaOScode%2FJuliaOS-181717?logo=github)](https://github.com/Juliaoscode/JuliaOS)
+
+**Aethel AI — Powered by [JuliaOS](https://github.com/Juliaoscode/JuliaOS)**  
+Built with ❤️ and Anchored by the [JuliaOS](https://github.com/Juliaoscode/JuliaOS) project.
 
   
   **A sophisticated AI platform built on the JuliaOS framework, specializing in Solana wallet analysis and intelligent agent management for the blockchain ecosystem.**
