@@ -245,7 +245,7 @@ export default function FeaturesSection() {
         {/* Feature Cards Grid */}
         <div 
           ref={featureCardsRef}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8" 
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8" 
           style={{ fontFamily: '"Inter", sans-serif' }}
         >
           {/* Smart Money Analysis Card */}
@@ -259,27 +259,27 @@ export default function FeaturesSection() {
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
-            <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-8 hover:border-teal-400/50 transition-all duration-300 h-[280px] flex flex-col">
+            <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-4 sm:p-6 md:p-8 hover:border-teal-400/50 transition-all duration-300 h-[340px] sm:h-[320px] md:h-[300px] flex flex-col overflow-hidden">
               {/* Decorative dots */}
-              <div className="absolute top-4 left-4 flex space-x-1">
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+              <div className="absolute top-3 sm:top-4 left-3 sm:left-4 flex space-x-1">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-60"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-40"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-20"></div>
               </div>
-              <div className="absolute top-4 right-4 flex space-x-1">
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+              <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex space-x-1">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-20"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-40"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-60"></div>
               </div>
 
-              <div className="pt-8 flex-1">
-                <h3 className="text-xl font-bold text-white mb-3">Smart Money Analysis</h3>
-                <p className="text-teal-200/80 text-sm mb-4">AI-powered Solana wallet analysis with comprehensive trading insights</p>
-                <ul className="text-teal-200/70 text-sm space-y-2">
-                  <li>• Helius RPC integration for real-time data</li>
-                  <li>• Trading metrics & P&L calculations</li>
-                  <li>• Risk scoring & behavioral patterns</li>
-                  <li>• Gemini AI-powered recommendations</li>
+              <div className="pt-6 sm:pt-8 flex-1 flex flex-col min-h-0">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mb-2 leading-tight flex-shrink-0">Smart Money Analysis</h3>
+                <p className="text-teal-200/80 text-xs sm:text-sm mb-3 leading-snug flex-shrink-0">AI-powered Solana wallet analysis with comprehensive trading insights</p>
+                <ul className="text-teal-200/70 text-xs sm:text-sm space-y-1 flex-1 overflow-hidden">
+                  <li className="leading-snug">• Helius RPC integration for real-time data</li>
+                  <li className="leading-snug">• Trading metrics & P&L calculations</li>
+                  <li className="leading-snug">• Risk scoring & behavioral patterns</li>
+                  <li className="leading-snug">• Gemini AI-powered recommendations</li>
                 </ul>
               </div>
             </div>
@@ -296,27 +296,27 @@ export default function FeaturesSection() {
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
-            <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-8 hover:border-teal-400/50 transition-all duration-300 h-[280px] flex flex-col">
+            <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-4 sm:p-6 md:p-8 hover:border-teal-400/50 transition-all duration-300 h-[340px] sm:h-[320px] md:h-[300px] flex flex-col overflow-hidden">
               {/* Decorative dots */}
-              <div className="absolute top-4 left-4 flex space-x-1">
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+              <div className="absolute top-3 sm:top-4 left-3 sm:left-4 flex space-x-1">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-60"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-40"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-20"></div>
               </div>
-              <div className="absolute top-4 right-4 flex space-x-1">
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+              <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex space-x-1">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-20"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-40"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-60"></div>
               </div>
 
-              <div className="pt-8 flex-1">
-                <h3 className="text-xl font-bold text-white mb-3">JuliaOS Backend Integration</h3>
-                <p className="text-teal-200/80 text-sm mb-4">High-performance Julia framework with enterprise-grade infrastructure</p>
-                <ul className="text-teal-200/70 text-sm space-y-2">
-                  <li>• Multi-layered architecture with Julia core</li>
-                  <li>• Agent orchestration & swarm algorithms</li>
-                  <li>• RESTful API with webhook support</li>
-                  <li>• Rust security layer for crypto operations</li>
+              <div className="pt-6 sm:pt-8 flex-1 flex flex-col min-h-0">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mb-2 leading-tight flex-shrink-0">JuliaOS Backend Integration</h3>
+                <p className="text-teal-200/80 text-xs sm:text-sm mb-3 leading-snug flex-shrink-0">High-performance Julia framework with enterprise-grade infrastructure</p>
+                <ul className="text-teal-200/70 text-xs sm:text-sm space-y-1 flex-1 overflow-hidden">
+                  <li className="leading-snug">• Multi-layered architecture with Julia core</li>
+                  <li className="leading-snug">• Agent orchestration & swarm algorithms</li>
+                  <li className="leading-snug">• RESTful API with webhook support</li>
+                  <li className="leading-snug">• Rust security layer for crypto operations</li>
                 </ul>
               </div>
             </div>
@@ -333,27 +333,27 @@ export default function FeaturesSection() {
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
-            <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-8 hover:border-teal-400/50 transition-all duration-300 h-[280px] flex flex-col">
+            <div className="relative bg-slate-800/80 backdrop-blur-md border border-teal-400/30 rounded-2xl p-4 sm:p-6 md:p-8 hover:border-teal-400/50 transition-all duration-300 h-[340px] sm:h-[320px] md:h-[300px] flex flex-col overflow-hidden">
               {/* Decorative dots */}
-              <div className="absolute top-4 left-4 flex space-x-1">
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
+              <div className="absolute top-3 sm:top-4 left-3 sm:left-4 flex space-x-1">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-60"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-40"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-20"></div>
               </div>
-              <div className="absolute top-4 right-4 flex space-x-1">
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-20"></div>
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-40"></div>
-                <div className="w-2 h-2 bg-teal-400 rounded-full opacity-60"></div>
+              <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex space-x-1">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-20"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-40"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-teal-400 rounded-full opacity-60"></div>
               </div>
 
-              <div className="pt-8 flex-1">
-                <h3 className="text-xl font-bold text-white mb-3">Agent Lifecycle Management</h3>
-                <p className="text-teal-200/80 text-sm mb-4">Complete agent management with real-time monitoring and control</p>
-                <ul className="text-teal-200/70 text-sm space-y-2">
-                  <li>• Create, start, stop & delete operations</li>
-                  <li>• Real-time status monitoring & health checks</li>
-                  <li>• Chat persistence & message templates</li>
-                  <li>• Batch operations with optimistic UI</li>
+              <div className="pt-6 sm:pt-8 flex-1 flex flex-col min-h-0">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mb-2 leading-tight flex-shrink-0">Agent Lifecycle Management</h3>
+                <p className="text-teal-200/80 text-xs sm:text-sm mb-3 leading-snug flex-shrink-0">Complete agent management with real-time monitoring and control</p>
+                <ul className="text-teal-200/70 text-xs sm:text-sm space-y-1 flex-1 overflow-hidden">
+                  <li className="leading-snug">• Create, start, stop & delete operations</li>
+                  <li className="leading-snug">• Real-time status monitoring & health checks</li>
+                  <li className="leading-snug">• Chat persistence & message templates</li>
+                  <li className="leading-snug">• Batch operations with optimistic UI</li>
                 </ul>
               </div>
             </div>

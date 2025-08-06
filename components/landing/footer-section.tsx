@@ -172,7 +172,7 @@ export default function FooterSection() {
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             <motion.a 
-              href="https://x.com/iKK6600us" 
+              href="https://x.com/iKK6600" 
               target="_blank" 
               rel="noopener noreferrer"
               className="hover:text-teal-300 transition-colors flex items-center gap-2 text-teal-200/70"
