@@ -1,7 +1,10 @@
-# Aethel AI - Next Generation AI Platform
+## 🔗 Project Attribution
 
-<div align="center">
-  <img src="/assets/logo.png" alt="Aethel AI Logo" width="120" height="120">
+[![GitHub](https://img.shields.io/badge/GitHub-JuliaOScode%2FJuliaOS-181717?logo=github)](https://github.com/Juliaoscode/JuliaOS)
+
+**Aethel AI — Powered by [JuliaOS](https://github.com/Juliaoscode/JuliaOS)**  
+Built with ❤️ and Anchored by the [JuliaOS](https://github.com/Juliaoscode/JuliaOS) project.
+
   
   **A sophisticated AI platform built on the JuliaOS framework, specializing in Solana wallet analysis and intelligent agent management for the blockchain ecosystem.**
 
@@ -10,49 +13,6 @@
   [![JuliaOS](https://img.shields.io/badge/JuliaOS-Framework-teal?style=flat-square)](https://julialang.org/)
   [![Solana](https://img.shields.io/badge/Solana-Blockchain-purple?style=flat-square&logo=solana)](https://solana.com/)
 </div>
-
-
-sent input to gemini ai in the backend using juliaos
-WALLET ANALYSIS REQUEST - RESPOND EXACTLY AS SPECIFIED
-
-Wallet: [address]
-Data: [transactions] transactions ([avg]/day over [days] days), [sol] SOL, [tokens] tokens, P&L: [pnl] ([timeframe]), Rank #[rank]
-
-RESPOND WITH EXACTLY THIS FORMAT (no additional steps or planning):
-
-🎯 **Trading Profile**
-• Type: [Day/Swing/Position] trader
-• Experience: [Beginner/Intermediate/Advanced]
-• Style: [High/Medium/Low] frequency
-
-📊 **Copy Analysis**
-• Copyability: [1-10]/10
-• Risk: [Low/Medium/High]
-• Strategy: [One sentence recommendation]
-
-⚡ **Key Behaviors**
-• [Main trading pattern]
-• [Portfolio management approach]
-• [Copy recommendation]
-
-RULES: Use ONLY the data provided. Be consistent. No additional analysis or steps.
-
-🎯 Expected Results
-
-🎯 **Trading Profile**
-• Type: Day trader
-• Experience: Intermediate  
-• Style: High frequency
-
-📊 **Copy Analysis**
-• Copyability: 7/10
-• Risk: High
-• Strategy: Follow with caution due to high frequency and potential volatility.
-
-⚡ **Key Behaviors**
-• Frequent transactions suggest active day trading across multiple tokens.
-• Holding a diverse portfolio of 1077 tokens indicates a broad investment approach.
-• Copy if you have a high-risk tolerance and understand the fast-paced nature of day trading.
 
 ## 🌟 Overview
 
@@ -140,6 +100,93 @@ Frontend → Proxy API → JuliaOS Backend → Julia Core Engine
 - **npm** or **yarn** package manager
 - **Modern web browser** (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)
 - **JuliaOS Backend** running and accessible
+
+
+**Sample input sent to Gemini AI 1.5 Pro using JuliaOS `llm_chat` Tool**
+
+```json
+{
+  "prompt_structure": "WALLET ANALYSIS REQUEST - RESPOND EXACTLY AS SPECIFIED",
+  "data_format": {
+    "addr": "wallet_address",
+    "txns": "total_transactions",
+    "days": "activity_period_days",
+    "sol": "native_balance",
+    "tokens": "unique_token_count",
+    "pnl": "profit_loss_amount",
+    "rank": "trader_rank",
+    "vol": "total_volume",
+    "trades": "total_trades",
+    "tf": "timeframe"
+  },
+  "response_format": {
+    "sections": [
+      "🎯 Trading Profile",
+      "📊 Copy Analysis",
+      "⚡ Key Behaviors"
+    ],
+    "constraints": "Use ONLY provided data. Be consistent. No additional analysis."
+  }
+}
+
+Sample output received from Gemini AI and displayed to users
+
+{
+  "message": {
+    "id": "timestamp-analysis",
+    "content": "Here's the basic wallet data for ABC123...XYZ9. AI analysis in progress...",
+    "sender": "agent",
+    "timestamp": "2025-01-08T10:30:00Z",
+    "analysis": {
+      "walletData": {
+        "address": "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+        "chain": "solana",
+        "nativeBalance": 12.5,
+        "balanceInLamports": 12500000000,
+        "tokenBalances": [
+          {
+            "symbol": "SOL",
+            "name": "Solana",
+            "balance": "12500000000",
+            "uiAmount": 12.5,
+            "contractAddress": "So11111111111111111111111111111111111111112",
+            "decimals": 9
+          }
+        ],
+        "transactions": [],
+        "totalTransactions": "1000+",
+        "firstTransactionDate": 1704067200,
+        "lastTransactionDate": 1704153600
+      },
+      "tradingMetrics": {
+        "totalVolume": 50000,
+        "totalTrades": 150,
+        "avgTradeSize": 333.33,
+        "profitLoss": 2500,
+        "winRate": 65.5,
+        "tradingFrequency": "medium"
+      },
+      "riskAssessment": {
+        "riskScore": 6,
+        "riskLevel": "medium",
+        "factors": {
+          "diversification": 7.2,
+          "volatility": 6.8,
+          "concentrationRisk": 5.5
+        }
+      }
+    }
+  }
+}
+
+```
+**Output In Frontend**
+The analysis is done using gemini ai that is part of JuliaOs Framework the above data is auto sent and recived upon users given inputs in the frontend 
+the wallet data is fetched using various apis mentioned in docs.
+
+
+<img width="1889" height="865" alt="analysis-image" src="https://github.com/user-attachments/assets/a5902721-11eb-4a0f-852a-27cf7ab0d020" />
+
 
 ### Installation
 
